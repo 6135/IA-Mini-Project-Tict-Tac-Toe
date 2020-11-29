@@ -127,12 +127,8 @@ public class Board implements Ilayout, Cloneable {
 		return status == 'v' || status == 'f';
 	}
     public char status(){
-		//return victory() ? 'v' : full() ? 'f' : 'i';
-        if(victory())
-            return 'v';
-        else if(full())
-            return 'f';
-        else return 'i';
+		return victory() ? 'v' : full() ? 'f' : 'i';
+        
     }
 
     public boolean victory(){
@@ -152,7 +148,6 @@ public class Board implements Ilayout, Cloneable {
         if(board[0][col]==' ')
             return false;
         else return board[0][col]==board[1][col] && board[1][col]==board[2][col];
-          
     }
 
     private boolean checkDLR(){
