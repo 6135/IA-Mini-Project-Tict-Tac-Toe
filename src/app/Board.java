@@ -140,7 +140,7 @@ public class Board implements Ilayout, Cloneable {
         for (int i = 0; i < 3; i++)
             if(checkRow(i) || checkCol(i))
                 return true;
-        return checkDLR() || checkDRL();
+        return checkLRD() || checkRLD();
     }
 
     private boolean checkRow(int row){
