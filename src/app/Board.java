@@ -121,7 +121,8 @@ public class Board implements Ilayout, Cloneable {
                 }                 
 			}
         return new ArrayList<>(children.keySet());
-    }
+	}
+	
 	public boolean terminal(){
 		char status = status();
 		return status == 'v' || status == 'f';
@@ -155,13 +156,13 @@ public class Board implements Ilayout, Cloneable {
           
     }
 
-    private boolean checkDLR(){
+    private boolean checkLRD(){
         if(board[0][0]==' ')
             return false;
         else return board[0][0] == board[1][1] && board[1][1] == board[2][2]
     }
 
-    private boolean checkDRL(){
+    private boolean checkRLD(){
         if(board[0][2]==' ')
             return false;
         else return board[0][2] == board[1][1] && board[1][1] == board[2][0];
