@@ -133,13 +133,11 @@ public class Board implements Ilayout, Cloneable {
 		for(int i = 0; i < dim; i++){
 			for(int j = 0; j < dim; j++){
 				char c = board[i][j];
-				if(Character.toUpperCase(c) == 'X' || Character.toUpperCase(c) == 'O') {
-					s.append('[');
-					s.append(c);
-					s.append("]");
-				}
+				s.append('[');
+				s.append(c);
+				s.append("]");
 			}
-			s.append('\n')
+			s.append('\n');
 		}
 		return s.toString();
 	}
