@@ -122,8 +122,12 @@ public class Board implements Ilayout, Cloneable {
 			}
         return new ArrayList<>(children.keySet());
     }
-
-    private char status(){
+	public boolean terminal(){
+		char status = status();
+		return status == 'v' || status == 'f';
+	}
+    public char status(){
+		//return victory() ? 'v' : full() ? 'f' : 'i';
         if(victory())
             return 'v';
         else if(full())
@@ -131,7 +135,7 @@ public class Board implements Ilayout, Cloneable {
         else return 'i';
     }
 
-    private boolean victory(){
+    public boolean victory(){
         for (int i = 0; i < 3; i++)
             if(checkRow(i) || checkCol(i))
                 return true;
