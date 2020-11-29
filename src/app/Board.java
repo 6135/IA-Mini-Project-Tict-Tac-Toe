@@ -142,24 +142,47 @@ public class Board implements Ilayout, Cloneable {
         if(board[row][0]==' ')
             return false;
         else return board[row][0]==board[row][1] && board[row][1]==board[row][2];
+        /*
+            if(board[row][0]==' ')
+        */
+        for (int i = 1; i < board[row].length; i++) 
+            if(board[row][i-1] != board[row][i])
+                return false;
+        return true;
     }
 
     private boolean checkCol(int col){
         if(board[0][col]==' ')
             return false;
-        else return board[0][col]==board[1][col] && board[1][col]==board[2][col];
+        /*
+            if(board[0][col]==' ')
+        */
+        for (int i = 1; i < board.length; i++)
+            if(board[i-1][col] != board[i][col])
     }
 
     private boolean checkLRD(){
         if(board[0][0]==' ')
             return false;
-        else return board[0][0] == board[1][1] && board[1][1] == board[2][2];
+        /*
+            if(board[0][0]==' ')
+        */
+        for (int i = 1; i < board.length; i++) 
+            if(board[i-1][i-1] != board[i][i])
+                return false;
+        return true;
     }
 
     private boolean checkRLD(){
-        if(board[0][2]==' ')
-            return false;
-        else return board[0][2] == board[1][1] && board[1][1] == board[2][0];
+        /*
+            if(board[0][2]==' ')
+                return false;
+            else return board[0][2] == board[1][1] && board[1][1] == board[2][0];
+        */
+        for (int i = 1; i < board.length; i++) 
+            if(board[i-1][board.length-i] != board[i][board.length-(i+1)])
+                return false;
+        return true;
     }
 
     private boolean full(){
