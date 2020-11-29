@@ -27,7 +27,7 @@ public class Board implements Ilayout, Cloneable {
 		board= new char[dim][dim];
 		int si=0;
 		int pos=Character.getNumericValue(str.charAt(0));
-		int r=((int)(pos/dim))-1;
+		int r=(dim *(int)(pos/dim))-1;
 		int c=(pos%dim)-1;
 		board[r][c]='X';
 	}
