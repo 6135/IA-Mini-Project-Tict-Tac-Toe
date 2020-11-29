@@ -24,7 +24,12 @@ public class Node {
             this.childArray.add(new Node(child));
         }
     }
-
+    public State state() { return state; }
+    public Node parent() { return parent; }
+    public List<Node> childArray() { return childArray; }
+    public void setState(State state){this.state=state;}
+    public void setParent(Node parent){this.parent=parent;}
+    public void setChildArray(List<Node> childArray){this.childArray=childArray;}
     
 
 }
