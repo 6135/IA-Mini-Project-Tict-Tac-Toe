@@ -1,5 +1,6 @@
 package app;
 
+import java.lang.invoke.StringConcatException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,20 +8,14 @@ import java.util.Stack;
 
 public class Board implements Ilayout, Cloneable {
 
-	private int dim = 1;
-	ArrayList<Stack<Node>> stacks;
+	private int dim = 3;
+	private char board [][];
 	/**
 	 * This function creates a new Board(initial configuration or goal) based on a input string
 	 * @param str configuration of the board 
 	 */
-	public Board(String str){
-		dim = str.replaceAll("\\s+", "").length();
-		stacks();
-		int stackIndex = 0;
-		for(int i = 0; i < str.length(); i++)
-			if(str.charAt(i) == ' ')
-				stackIndex++;
-			else stacks.get(stackIndex).add(new Node(str.charAt(i)));
+	public Board(){
+		board = new char[dim][dim];
 
 	}
 
@@ -28,9 +23,13 @@ public class Board implements Ilayout, Cloneable {
 	 * This function creates a new Board(child) with a List of Stacks generated in the function children
 	 * @param sts List of Stacks of the board
 	 */
-	public Board(List<Stack<Node>> sts){
-		stacks = (ArrayList<Stack<Node>>) cloneStacks(sts);
-		dim = stacks.size();
+	public Board(String str){
+		board= new char[dim][dim];
+		int si=0;
+		int pos=Character.getNumericValue(str.charAt(0));
+		int r=((int)(pos/dim))-1;
+		int c=(pos%dim)-1;
+		board[r][c]='X';
 	}
 
 	/**
