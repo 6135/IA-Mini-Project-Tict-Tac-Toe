@@ -131,11 +131,15 @@ public class Board implements Ilayout, Cloneable {
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		for(int i = 0; i < dim; i++){
-			Stack<Node> stack = stacks.get(i);
-			if(!stack.isEmpty()){
-				s.append(stack.toString());
-				s.append("\r\n");
+			for(int j = 0; j < dim; j++){
+				char c = board[i][j];
+				if(Character.toUpperCase(c) == 'X' || Character.toUpperCase(c) == 'O') {
+					s.append('[');
+					s.append(c);
+					s.append("]");
+				}
 			}
+			s.append('\n')
 		}
 		return s.toString();
 	}
