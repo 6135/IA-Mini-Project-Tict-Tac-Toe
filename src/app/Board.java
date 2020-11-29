@@ -123,6 +123,54 @@ public class Board implements Ilayout, Cloneable {
         return new ArrayList<>(children.keySet());
     }
 
+    private char status(){
+        if(victory())
+            return 'v';
+        else if(full())
+            return 'f';
+        else return 'i';
+    }
+
+    private boolean victory(){
+        for (int i = 0; i < 3; i++)
+            if(checkRow(i) || checkCol(i))
+                return true;
+        return checkDLR() || checkDRL();
+    }
+
+    private boolean checkRow(int row){
+        if(board[row][0]==' ')
+            return false;
+        else return board[row][0]==board[row][1] && board[row][1]==board[row][2];
+    }
+
+    private boolean checkCol(int col){
+        if(board[0][col]==' ')
+            return false;
+        else return board[0][col]==board[1][col] && board[1][col]==board[2][col];
+          
+    }
+
+    private boolean checkDLR(){
+        if(board[0][0]==' ')
+            return false;
+        else return board[0][0] == board[1][1] && board[1][1] == board[2][2]
+    }
+
+    private boolean checkDRL(){
+        if(board[0][2]==' ')
+            return false;
+        else return board[0][2] == board[1][1] && board[1][1] == board[2][0];
+    }
+
+    private boolean full(){
+        for (int row = 0; row < 3; row++) 
+            for (int col = 0; col < 3; col++)
+                if(board[row][col]==' ')
+                    return false;
+        return true;       
+    }
+
 	/**
 	 * @return Returns the configuration that represents each stack of blocks in a separated row. Each stack is within
 	 * [] and two consecutive blocks within the same stack are separated by a comma followed by a space.
