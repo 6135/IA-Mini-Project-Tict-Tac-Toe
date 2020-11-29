@@ -153,7 +153,7 @@ public class Board implements Ilayout, Cloneable {
     private boolean checkLRD(){
         if(board[0][0]==' ')
             return false;
-        else return board[0][0] == board[1][1] && board[1][1] == board[2][2]
+        else return board[0][0] == board[1][1] && board[1][1] == board[2][2];
     }
 
     private boolean checkRLD(){
