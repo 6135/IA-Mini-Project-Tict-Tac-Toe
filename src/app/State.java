@@ -20,7 +20,7 @@ public class State {
         this.layout = new Board((Board) src.layout);
         this.player = src.player;
         this.visitCount = src.visitCount;
-        this.winScore = src.winScore
+        this.winScore = src.winScore;
     }
 
     public Ilayout layout() { return layout; }

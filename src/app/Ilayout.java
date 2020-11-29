@@ -9,7 +9,7 @@ public interface Ilayout {
     /**
      * @return the children of the reciever
      */
-    List<Ilayout> children();
+    List<Ilayout> children(Player player);
     /**
      * @return true if the receiver equals the argument 'I'; return false otherwise
      */
