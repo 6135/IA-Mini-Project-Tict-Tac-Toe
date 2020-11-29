@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Queue;
 
 
-public class IDA implements Algorithm {
+public class MCTS implements Algorithm {
 
     protected Queue<State> abertos;
     private Ilayout objective;
@@ -38,11 +38,6 @@ public class IDA implements Algorithm {
         public Ilayout getLayout(){return layout;}
 		public String toString() {return layout.toString();}
 
-		public double getG() {return g;}
-
-        public double getF(Ilayout goal, Heuristics h) {
-            return h.getH(layout,goal) + getG();
-        }
         public boolean isGoal(Ilayout objective){
             return layout.equals(objective);
         }
@@ -69,44 +64,31 @@ public class IDA implements Algorithm {
      * @param h heuristic used to solve the problem
      * @return Returns g cost to achieve goal from start 
      */
-    public final double solve(Ilayout start, Ilayout goal, Heuristics h){
-        objective = goal;
-        int bound = (int) h.getH(start,objective);
-        path = new State(start,null);
-        while(true){
-            int t = search(0, bound, h);
-            if(t == -1){
-                return path.getG();}
-            bound = t;
-            
-        }
+    public final void MCTsSearch(Ilayout s0){
+        State v0 = new State(s0,null);
+        long startTime = System.nanoTime();
+        while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
+            State vl = MCTsTreePolicy(v0);
+            int win_or_loss = MCTsDefaultPolicy(MCTsSim(vl));
+            vl = MCTsBackup(vl, win_or_loss);
+        }  
+        //return MCTsBestChild(v0);
     }
-    /**
-     * This function find the minimum of all f greater than t encountered 
-     *@param g cost to achieve the goal
-     * @param bound depth threshold of ida
-     * @param h heuristic used to solve the problem
-     * @return the minimum of all f greater than t encountered 
-     */
-    private final int search(int g, int bound, Heuristics h){
-        double hVal = h.getH(path.layout, objective);
-        int f = (int) (g + hVal);
-        if(f>bound)
-            return f;
-        if(hVal == 0)
-            return -1;
-        int min = 999;
-        for(State suc : sucesssores(path)){
-            State oldPath = path;
-            path = suc;
-            int t = search(g + 1,bound,h);
-            if(path.isGoal(objective))
-                return -1;
-            else if(t<min) min = t;
-            path = oldPath;
-        }
-        return min;
- 
+
+    private State MCTsBackup(State vl, int win_or_loss) {
+        return null;
+    }
+
+    private int MCTsDefaultPolicy(Object mcTsSim) {
+        return 0;
+    }
+
+    private State MCTsTreePolicy(State v0) {
+        return null;
+    }
+
+    private Object MCTsSim(State vl) {
+        return null;
     }
 
 } 
