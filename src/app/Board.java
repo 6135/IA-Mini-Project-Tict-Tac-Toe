@@ -120,6 +120,54 @@ public class Board implements Ilayout, Cloneable {
                 }                 
 			}
         return new ArrayList<>(children.keySet());
+	}
+	
+	public boolean terminal(){
+		char status = status();
+		return status == 'v' || status == 'f';
+	}
+    public char status(){
+		return victory() ? 'v' : full() ? 'f' : 'i';
+        
+    }
+
+    public boolean victory(){
+        for (int i = 0; i < 3; i++)
+            if(checkRow(i) || checkCol(i))
+                return true;
+        return checkLRD() || checkRLD();
+    }
+
+    private boolean checkRow(int row){
+        if(board[row][0]==' ')
+            return false;
+        else return board[row][0]==board[row][1] && board[row][1]==board[row][2];
+    }
+
+    private boolean checkCol(int col){
+        if(board[0][col]==' ')
+            return false;
+        else return board[0][col]==board[1][col] && board[1][col]==board[2][col];
+    }
+
+    private boolean checkLRD(){
+        if(board[0][0]==' ')
+            return false;
+        else return board[0][0] == board[1][1] && board[1][1] == board[2][2]
+    }
+
+    private boolean checkRLD(){
+        if(board[0][2]==' ')
+            return false;
+        else return board[0][2] == board[1][1] && board[1][1] == board[2][0];
+    }
+
+    private boolean full(){
+        for (int row = 0; row < 3; row++) 
+            for (int col = 0; col < 3; col++)
+                if(board[row][col]==' ')
+                    return false;
+        return true;       
     }
 
 	/**
@@ -130,11 +178,13 @@ public class Board implements Ilayout, Cloneable {
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		for(int i = 0; i < dim; i++){
-			Stack<Node> stack = stacks.get(i);
-			if(!stack.isEmpty()){
-				s.append(stack.toString());
-				s.append("\r\n");
+			for(int j = 0; j < dim; j++){
+				char c = board[i][j];
+				s.append('[');
+				s.append(c);
+				s.append("]");
 			}
+			s.append('\n');
 		}
 		return s.toString();
 	}
