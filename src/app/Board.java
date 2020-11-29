@@ -139,11 +139,10 @@ public class Board implements Ilayout, Cloneable {
     }
 
     private boolean checkRow(int row){
-        if(board[row][0]==' ')
-            return false;
-        else return board[row][0]==board[row][1] && board[row][1]==board[row][2];
         /*
             if(board[row][0]==' ')
+                return false;
+            else return board[row][0]==board[row][1] && board[row][1]==board[row][2];
         */
         for (int i = 1; i < board[row].length; i++) 
             if(board[row][i-1] != board[row][i])
@@ -152,20 +151,22 @@ public class Board implements Ilayout, Cloneable {
     }
 
     private boolean checkCol(int col){
-        if(board[0][col]==' ')
-            return false;
         /*
             if(board[0][col]==' ')
+                return false;
+            else return board[0][col]==board[1][col] && board[1][col]==board[2][col];
         */
         for (int i = 1; i < board.length; i++)
             if(board[i-1][col] != board[i][col])
+                return false;
+        return true;
     }
 
     private boolean checkLRD(){
-        if(board[0][0]==' ')
-            return false;
         /*
             if(board[0][0]==' ')
+                return false;
+            else return board[0][0] == board[1][1] && board[1][1] == board[2][2];
         */
         for (int i = 1; i < board.length; i++) 
             if(board[i-1][i-1] != board[i][i])
