@@ -9,38 +9,6 @@ public class MCTS implements Algorithm {
     protected Queue<State> abertos;
     private Ilayout objective;
     private State path;
-    public static final class State {
-		protected Ilayout layout;
-		protected State father;
-		protected double g;
-        /**
-         * This function creates a new State with a configuration l and with a father n
-         * @param l configuration of the current state
-         * @param n father state of the current state
-         */
-		public State(Ilayout l, State n) {
-			layout = l;
-			father = n;
-			if (father != null)
-				g = father.g + l.getG();
-			else
-				g = 0.0;
-		}
-        /**
-         * Added only for testing porpuses, nothing else
-         * @return the father of the state
-         */
-        public State getFather(){return father;}
-        /**
-         * Added only for testing porpuses, nothing else
-         * @return the layout of the state
-         */
-        public Ilayout getLayout(){return layout;}
-		public String toString() {return layout.toString();}
-
-        public boolean isGoal(Ilayout objective){
-            return layout.equals(objective);
-        }
 
     }
     /**
