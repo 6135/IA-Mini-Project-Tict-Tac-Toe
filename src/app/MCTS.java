@@ -20,7 +20,7 @@ public class MCTS {
 		List<Ilayout> children = n.layout().children(p);
 		for (Ilayout e : children) {
 			if (s.parent() == null || !e.equals(s.parent().getState().layout())) {
-				State nn = new Node(new State(e,p.opponent,0,0));
+				Node nn = new Node(new State(e,p.opponent(),0,0),s);
 				sucs.add(nn);
 			}
 		}
