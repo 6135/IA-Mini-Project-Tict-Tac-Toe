@@ -4,23 +4,23 @@ import java.util.List;
 import java.util.Queue;
 
 
-public class MCTS implements Algorithm {
+public class MCTS {
 
     protected Queue<State> abertos;
     private Ilayout objective;
     private State path;
 
-    }
     /**
      *  @param n initial state
      * @return a list of  States from all possibles states from  n
      */
-	private final List<State> sucesssores(State n) {
-		List<State> sucs = new ArrayList<>();
-		List<Ilayout> children = n.layout.children();
+	private final List<Node> sucesssores(Node s, Player p) {
+        State n = s.getState();
+		List<Node> sucs = new ArrayList<>();
+		List<Ilayout> children = n.layout().children(p);
 		for (Ilayout e : children) {
-			if (n.father == null || !e.equals(n.father.layout)) {
-				State nn = new State(e, n);
+			if (s.parent() == null || !e.equals(s.parent().getState().layout())) {
+				State nn = new Node(new State(e,p.opponent,0,0));
 				sucs.add(nn);
 			}
 		}
@@ -36,7 +36,7 @@ public class MCTS implements Algorithm {
         Node v0 = new Node(new State(s0,p,0,0),null);
         long startTime = System.nanoTime();
         while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
-            Node vl = MCTsTreePolicy(v0);
+            State vl = MCTsTreePolicy(v0.getState()); 
             int win_or_loss = MCTsDefaultPolicy(MCTsSim(vl));
             vl = MCTsBackup(vl, win_or_loss);
         }  
