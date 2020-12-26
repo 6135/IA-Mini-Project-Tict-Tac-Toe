@@ -4,23 +4,23 @@ import java.util.List;
 import java.util.Queue;
 
 
-public class MCTS implements Algorithm {
+public class MCTS {
 
     protected Queue<State> abertos;
     private Ilayout objective;
     private State path;
 
-    }
     /**
      *  @param n initial state
      * @return a list of  States from all possibles states from  n
      */
-	private final List<State> sucesssores(State n) {
-		List<State> sucs = new ArrayList<>();
-		List<Ilayout> children = n.layout.children();
+	private final List<Node> sucesssores(Node s, Player p) {
+        State n = s.getState();
+		List<Node> sucs = new ArrayList<>();
+		List<Ilayout> children = n.layout().children(p);
 		for (Ilayout e : children) {
-			if (n.father == null || !e.equals(n.father.layout)) {
-				State nn = new State(e, n);
+			if (s.parent() == null || !e.equals(s.parent().getState().layout())) {
+				Node nn = new Node(new State(e,p.opponent(),0,0),s);
 				sucs.add(nn);
 			}
 		}
@@ -32,11 +32,11 @@ public class MCTS implements Algorithm {
      * @param h heuristic used to solve the problem
      * @return Returns g cost to achieve goal from start 
      */
-    public final void MCTsSearch(Ilayout s0){
-        State s0 = new State(s0,null);
+    public final void MCTsSearch(Ilayout s0, Player p){
+        Node v0 = new Node(new State(s0,p,0,0),null);
         long startTime = System.nanoTime();
         while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
-            State vl = MCTsTreePolicy(v0);
+            State vl = MCTsTreePolicy(v0.getState()); 
             int win_or_loss = MCTsDefaultPolicy(MCTsSim(vl));
             vl = MCTsBackup(vl, win_or_loss);
         }  

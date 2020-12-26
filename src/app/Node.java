@@ -7,7 +7,7 @@ public class Node {
     private State state;
     private Node parent;
     private List<Node> childArray;
-
+    
     public Node(State state, Node parent){
         this.state = state;
         this.parent = parent;
@@ -24,7 +24,7 @@ public class Node {
             this.childArray.add(new Node(child));
         }
     }
-    public State state() { return state; }
+    public State getState() { return state; }
     public Node parent() { return parent; }
     public List<Node> childArray() { return childArray; }
     public void setState(State state){this.state=state;}
