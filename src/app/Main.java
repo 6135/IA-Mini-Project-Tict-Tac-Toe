@@ -6,12 +6,16 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         
-        Board start = new Board(sc.nextLine());
-        Board goal = new Board(sc.nextLine());
-        //double b = s.solve(start,goal, h);
+        System.out.println("Welcome to Tic-Tac-Toe. Choose the game mode:\n1.Player vs CPU\n2.CPU vs CPU");
         
-        if(false) System.out.println("no solution was found");
-        else System.out.println();
+        int gm = sc.nextInt();
+        Player cpu1 = new Player("cpu1");
+
+        if(gm==1)  new Player("player");
+        else if(gm==2)  new Player("cpu2");
+    
+       
+       
 
         sc.close();
 
