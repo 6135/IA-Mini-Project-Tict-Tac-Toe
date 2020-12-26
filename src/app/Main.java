@@ -13,8 +13,13 @@ public class Main {
 
         if(gm==1)  new Player("player");
         else if(gm==2)  new Player("cpu2");
-    
-       
+        
+        Board b= new Board(sc.nextLine());
+        char status = 'i';
+        while (status=='i') {
+            
+            status = b.status();
+        }
        
 
         sc.close();

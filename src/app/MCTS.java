@@ -33,7 +33,7 @@ public class MCTS implements Algorithm {
      * @return Returns g cost to achieve goal from start 
      */
     public final void MCTsSearch(Ilayout s0){
-        State v0 = new State(s0,null);
+        State s0 = new State(s0,null);
         long startTime = System.nanoTime();
         while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
             State vl = MCTsTreePolicy(v0);
