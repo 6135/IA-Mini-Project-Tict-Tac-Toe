@@ -126,6 +126,7 @@ public class Board implements Ilayout, Cloneable {
 		char status = status();
 		return status == 'v' || status == 'f';
 	}
+	
     public char status(){
 		return victory() ? 'v' : full() ? 'f' : 'i';
         
