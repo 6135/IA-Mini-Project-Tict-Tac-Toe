@@ -126,6 +126,7 @@ public class Board implements Ilayout, Cloneable {
 		char status = status();
 		return status == 'v' || status == 'f';
 	}
+	
     public char status(){
 		return victory() ? 'v' : full() ? 'f' : 'i';
         
@@ -205,7 +206,10 @@ public class Board implements Ilayout, Cloneable {
 			for(int j = 0; j < dim; j++){
 				char c = board[i][j];
 				s.append('[');
-				s.append(c);
+				if(c ==' ')
+					s.append("-");
+				else
+					s.append(c);
 				s.append("]");
 			}
 			s.append('\n');
