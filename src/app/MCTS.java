@@ -32,11 +32,11 @@ public class MCTS implements Algorithm {
      * @param h heuristic used to solve the problem
      * @return Returns g cost to achieve goal from start 
      */
-    public final void MCTsSearch(Ilayout s0){
-        State v0 = new State(s0,null);
+    public final void MCTsSearch(Ilayout s0, Player p){
+        Node v0 = new Node(new State(s0,p,0,0),null);
         long startTime = System.nanoTime();
         while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
-            State vl = MCTsTreePolicy(v0);
+            Node vl = MCTsTreePolicy(v0);
             int win_or_loss = MCTsDefaultPolicy(MCTsSim(vl));
             vl = MCTsBackup(vl, win_or_loss);
         }  
