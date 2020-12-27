@@ -18,18 +18,24 @@ public class Main {
         cpu1.setOpponent(cpu2);
         cpu2.setOpponent(cpu1);
 
-       Board b = new Board();
-       //char status = b.status();
-       Player p = cpu1;
-       System.out.println(b.toString());
-       while( !b.terminal() ) {
-           b=b.randMove(p);
-           p=p.opponent();
-           System.out.println(b.toString());
-           //status = b.status();
-           //System.out.println(status);
-       }
-       
+        Board b = new Board();
+        MCTS mcts = new MCTS();
+        System.out.println(b.toString());
+        Player p = cpu1;
+        System.out.println(b.terminal(p));
+        while( !b.terminal(p) ) {
+            b = (Board) mcts.MCTsSearch(b, p).layout();
+            p = p.opponent();
+            System.out.println(b.toString());
+            System.out.println(b.terminal(p));
+        }
+        char status = b.status(cpu1);
+        if(status == 'v')
+            System.out.println(cpu1.getPlayer() + " has won the game!");
+        else if(status == 'l')
+            System.out.println(cpu1.opponent().getPlayer() + " has won the game!");
+        else if(status == 'f')
+            System.out.println("Draw!");
         sc.close();
 
     }

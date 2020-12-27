@@ -75,10 +75,7 @@ public class Board implements Ilayout, Cloneable {
      */
 	@Override
 	public boolean equals(Object l) {
-		if(l instanceof Board){
-			ArrayList<Stack<Node>> s = ((Board) l).stacks;
-			return stacks.containsAll(s);
-		} else return false;
+		return false;
 		
 	}
     /**
@@ -99,28 +96,27 @@ public class Board implements Ilayout, Cloneable {
     @Override
     public List<Ilayout> children(Player p) {
         HashMap<Ilayout, Integer> children = new HashMap<>();
-		Node c; 
 		Board b;
 		int index = 0;
 		for(int i=0;i<dim;i++){
-			for(int j=0;j<dim;j++)
-			{
-				if(board[i][j]==' ')
-				b = (Board) this.clone();
-				b.board[i][j]=p.opponent().getSymbol();
-				children.put(b,index++);
+			for(int j=0;j<dim;j++){
+				if(board[i][j]=='\0'){
+					b = (Board) this.clone();
+					b.board[i][j]=p.opponent().getSymbol();
+					children.put(b,index++);
+				}
 			}
 		}
         return new ArrayList<>(children.keySet());
 	}
 	
-	public boolean terminal(){
-		char status = status();
-		return status == 'v' || status == 'f';
+	public boolean terminal(Player p){
+		char status = status(p);
+		return status != 'i';
 	}
 	
-    public char status(){
-		return victory() ? 'v' : full() ? 'f' : 'i';
+    public char status(Player p){
+		return victory(p) ? 'v' : victory(p.opponent()) ? 'l' : full() ? 'd' : 'i';
         
     }
 
@@ -129,6 +125,13 @@ public class Board implements Ilayout, Cloneable {
             if(checkRow(i) || checkCol(i))
                 return true;
         return checkLRD() || checkRLD();
+    }
+
+    public boolean victory(Player p){
+        for (int i = 0; i < 3; i++)
+            if((checkRow(i) && board[i][0] == p.getSymbol()) || (checkCol(i) && board[0][i] == p.getSymbol()))
+                return true;
+        return (checkLRD() || checkRLD()) && board[(int)dim/2][(int)dim/2]==p.getSymbol();
     }
 
     private boolean checkRow(int row){
@@ -178,7 +181,7 @@ public class Board implements Ilayout, Cloneable {
     private boolean full(){
         for (int row = 0; row < 3; row++) 
             for (int col = 0; col < 3; col++)
-                if(board[row][col]==' ')
+                if(board[row][col]=='\0')
                     return false;
         return true;       
     }
@@ -193,12 +196,10 @@ public class Board implements Ilayout, Cloneable {
 		for(int i = 0; i < dim; i++){
 			for(int j = 0; j < dim; j++){
 				char c = board[i][j];
-				s.append('[');
-				if(c ==' ')
+				if(c =='\0')
 					s.append("-");
 				else
 					s.append(c);
-				s.append("]");
 			}
 			s.append('\n');
 		}
@@ -215,4 +216,5 @@ public class Board implements Ilayout, Cloneable {
 			return copy;
 		}
 		else return copy.randMove(p);
+	}
 }

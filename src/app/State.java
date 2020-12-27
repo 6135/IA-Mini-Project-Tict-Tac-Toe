@@ -10,15 +10,15 @@ public class State {
     private Player player;
 
     private int visitCount;
-    private double winScore;
+    private int winScore;
     private double treePolicy = -1;
     private List<State> childArray;
 
-    public State(Ilayout s0, Player player, int visitCount, double winScore,State parent){
+    public State(Ilayout s0, Player player,State parent){
         this.layout = s0;
         this.player = player;
-        this.visitCount = visitCount;
-        this.winScore = winScore;
+        this.visitCount = 1;
+        this.winScore = 0;
         this.parent=parent;
     }
 
@@ -47,20 +47,15 @@ public class State {
     public void setTreePolicy(double treePolicy) {this.treePolicy = treePolicy;}
 
     public void addWinScore(double winScore) { this.winScore += winScore; }
+    public void addVisits(double visitCount) { this.visitCount += visitCount; }
     public void visit(){this.visitCount++;}
 
     public List<State> children(Player opponent){
-        List<State> children = new ArrayList<>();
+        childArray = new ArrayList<>();
         for(Ilayout l : layout.children(opponent)){
-            State s = new State(l,opponent,0,0);
-            children.add(s);
+            State s = new State(l,opponent,this);
+            childArray.add(s);
         }
-        return children;
-    }
-
-    public void play(Heuristics h) {
-        /*
-        *TODO
-        */
+        return childArray;
     }
 }
