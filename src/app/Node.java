@@ -1,9 +1,10 @@
 package app;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class Node {
+public class Node{
     private State state;
     private Node parent;
     private List<Node> childArray;
@@ -30,6 +31,6 @@ public class Node {
     public void setState(State state){this.state=state;}
     public void setParent(Node parent){this.parent=parent;}
     public void setChildArray(List<Node> childArray){this.childArray=childArray;}
-    
 
+    
 }

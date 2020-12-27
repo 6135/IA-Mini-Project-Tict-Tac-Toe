@@ -1,6 +1,9 @@
 package app;
+
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 
@@ -26,6 +29,26 @@ public class MCTS {
 		return sucs;
     }
     
+    Comparator<State> cmpState = new Comparator<State>(){
+        private double stateExp(State o){
+            try {
+                double firstExper = o.winScore()/o.visitCount();
+                double secondExper = Math.sqrt((2*(Math.log(o.parent().visitCount()))/o.visitCount()));
+                double expr = firstExper - secondExper;
+                o.setTreePolicy(expr);
+                return expr;
+            } catch(Exception e) {
+                return Integer.MAX_VALUE;
+            }
+        }
+        
+        @Override
+        public int compare(State o1, State o2) {
+           return (int) Math.signum(stateExp(o1)-stateExp(o2));
+        }
+        
+    };
+
     /**
      * @param start Board with initial configuration
      * @param goal Board that we want to achieve
@@ -35,6 +58,8 @@ public class MCTS {
     public final void MCTsSearch(Ilayout s0, Player p){
         State v0 = new State(s0,p,0,0,null);
         long startTime = System.nanoTime();
+        PriorityQueue<State> pq = new PriorityQueue<>(cmpState);
+        pq.add(v0);
         while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
             State vl = MCTsTreePolicy(v0); 
             int win_or_loss = MCTsDefaultPolicy(MCTsSim(vl));
