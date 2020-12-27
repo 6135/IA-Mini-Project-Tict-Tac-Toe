@@ -4,6 +4,7 @@ import java.lang.invoke.StringConcatException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 public class Board implements Ilayout, Cloneable {
@@ -239,5 +240,13 @@ public class Board implements Ilayout, Cloneable {
 			newS.add(n);
 		return newS;
 	}
+
+	public randMove(Player p){
+		int random = Math.random()*(8);
+		int r=(dim *(int)(random/dim))-1;
+		int c=(random%dim)-1;
+		if(board[r][c])
+	}
+
 
 }
