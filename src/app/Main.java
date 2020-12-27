@@ -11,9 +11,11 @@ public class Main {
         /*System.out.println("Welcome to Tic-Tac-Toe. Choose the game mode:\n1.Player vs CPU\n2.CPU vs CPU");
         
         int gm = sc.nextInt();*/
-        System.out.println("\'"+board[0][0]+"\'");
+        /*System.out.println("\'"+board[0][0]+"\'");
         if(board[1][0] != '\0')
-            System.out.println("\'"+board[1][0]+"\'");
+            System.out.println("\'"+board[1][0]+"\'");*/
+
+        
         Player cpu1 = new Player("cpu1");
         Player cpu2 = new Player("cpu2");
 
@@ -22,6 +24,7 @@ public class Main {
 
        Board b = new Board();
        
+       b.children(cpu1);
 
         sc.close();
 
