@@ -98,7 +98,19 @@ public class Board implements Ilayout, Cloneable {
 	 */
     @Override
     public List<Ilayout> children(Player p) {
-		return null;
+        HashMap<Ilayout, Integer> children = new HashMap<>();
+		char s=p.getSymbol();
+		Board b;
+		int index = 0;
+        for (int i = 0; i < dim; i++){
+			for(int j=0; j<dim;j++){
+				b=(Board) this.clone();
+				b.board[i][j]=s;
+				children.put(b, index++);
+			}
+		}  
+		System.out.println(children);		
+        return new ArrayList<>(children.keySet());
 	}
 	
 	public boolean terminal(){
