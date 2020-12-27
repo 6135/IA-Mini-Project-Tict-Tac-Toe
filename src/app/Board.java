@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Stack;
 
 public class Board implements Ilayout, Cloneable {
-
+	private Random rand = new Random();
 	private int dim = 3;
 	private char board [][];
 	/**
@@ -106,22 +106,8 @@ public class Board implements Ilayout, Cloneable {
 	 * @return List of all possible movements, excluding one that equals the initial layout, and any repeated 
 	 */
     @Override
-    public List<Ilayout> children() {
-        HashMap<Ilayout, Integer> children = new HashMap<>();
-		Node c; 
-		Board b;
-		int index = 0;
-        for (int i = 0; i < stacks.size(); i++)        
-            if(!stacks.get(i).empty()) {    
-                for (int j = 1; j < dim; j++) {
-
-					b = (Board) this.clone();
-                    c=b.stacks.get(i).pop();                      
-					b.stacks.get((j+i)%dim).push(c); 
-                    children.put(b,index++);                          
-                }                 
-			}
-        return new ArrayList<>(children.keySet());
+    public List<Ilayout> children(Player p) {
+        Player p = p.opponent();
 	}
 	
 	public boolean terminal(){
@@ -192,7 +178,7 @@ public class Board implements Ilayout, Cloneable {
     private boolean full(){
         for (int row = 0; row < 3; row++) 
             for (int col = 0; col < 3; col++)
-                if(board[row][col]==' ')
+                if(board[row][col]=='\0')
                     return false;
         return true;       
     }
@@ -206,8 +192,8 @@ public class Board implements Ilayout, Cloneable {
 		StringBuilder s = new StringBuilder();
 		for(int i = 0; i < dim; i++){
 			for(int j = 0; j < dim; j++){
-				char c = board[i][j];			
-				if(c ==' ')
+				char c = board[i][j];
+				if(c == '\0')
 					s.append("-");
 				else
 					s.append(c);
@@ -240,12 +226,15 @@ public class Board implements Ilayout, Cloneable {
 		return newS;
 	}
 
-	public randMove(Player p){
-		int random = Math.random()*(8);
-		int r=(dim *(int)(random/dim))-1;
-		int c=(random%dim)-1;
-		if(board[r][c]== '')
+	public void randMove(Player p){
+		int i = rand.nextInt(8);
+		int r=(dim *(int)(i/dim))-1;
+		int c=(i%dim)-1;
+		if(board[r][c] == '\0')
+			board[r][c] = p.getSymbol();
+		else randMove(p);
 	}
+
 
 
 }
