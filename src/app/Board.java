@@ -205,13 +205,11 @@ public class Board implements Ilayout, Cloneable {
 		StringBuilder s = new StringBuilder();
 		for(int i = 0; i < dim; i++){
 			for(int j = 0; j < dim; j++){
-				char c = board[i][j];
-				s.append('[');
+				char c = board[i][j];			
 				if(c ==' ')
 					s.append("-");
 				else
 					s.append(c);
-				s.append("]");
 			}
 			s.append('\n');
 		}
