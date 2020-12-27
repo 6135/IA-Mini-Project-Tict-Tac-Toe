@@ -19,15 +19,15 @@ public class Main {
         cpu2.setOpponent(cpu1);
 
        Board b = new Board();
-       char status = b.status();
+       //char status = b.status();
        Player p = cpu1;
        System.out.println(b.toString());
-       while( status != 'v' && status != 'f' ) {
+       while( !b.terminal() ) {
            b=b.randMove(p);
            p=p.opponent();
            System.out.println(b.toString());
-           status = b.status();
-           System.out.println(status);
+           //status = b.status();
+           //System.out.println(status);
        }
        
         sc.close();
