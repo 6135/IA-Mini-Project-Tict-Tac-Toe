@@ -71,11 +71,8 @@ public class MCTS {
     }
 
     public State MCTSExpansion(State selected){
-        List<Ilayout> children = selected.layout().children(selected.player().opponent());
-
-        for (Ilayout board : children) {
-           new State(board,selected.player().opponent(),selected);
-        }
+        List<State> children = sucs(selected,selected.player().opponent());
+        selected.setChildArray(children);
         return selected;
     }
 
