@@ -14,18 +14,18 @@ public class MCTS {
      *  @param n initial state
      * @return a list of  States from all possibles states from  n
      */
-	private final List<Node> sucesssores(Node s, Player p) {
-        State n = s.getState();
-		List<Node> sucs = new ArrayList<>();
-		List<Ilayout> children = n.layout().children(p);
+	private final List<State> sucesssores(State s, Player p) {
+		List<State> sucs = new ArrayList<>();
+		List<Ilayout> children = s.layout().children(p);
 		for (Ilayout e : children) {
-			if (s.parent() == null || !e.equals(s.parent().getState().layout())) {
-				Node nn = new Node(new State(e,p.opponent(),0,0),s);
+			if (s.parent() == null || !e.equals(s.parent().layout())) {
+				State nn = new State(e,p.opponent(),0,0,s);
 				sucs.add(nn);
 			}
 		}
 		return sucs;
     }
+    
     /**
      * @param start Board with initial configuration
      * @param goal Board that we want to achieve
@@ -33,18 +33,21 @@ public class MCTS {
      * @return Returns g cost to achieve goal from start 
      */
     public final void MCTsSearch(Ilayout s0, Player p){
-        Node v0 = new Node(new State(s0,p,0,0),null);
+        State v0 = new State(s0,p,0,0,null);
         long startTime = System.nanoTime();
         while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
-            State vl = MCTsTreePolicy(v0.getState()); 
+            State vl = MCTsTreePolicy(v0); 
             int win_or_loss = MCTsDefaultPolicy(MCTsSim(vl));
-            vl = MCTsBackup(vl, win_or_loss);
+            vl = backPropagation(vl, win_or_loss);
         }  
         //return MCTsBestChild(v0);
     }
 
-    private State MCTsBackup(State vl, int win_or_loss) {
-        return null;
+    private State backPropagation(State vl, int win_or_loss) {
+        if(vl.parent()!=null){
+            vl.addWinScore(win_or_loss);
+            return backPropagation(vl.parent(),win_or_loss);
+        }else return vl;
     }
 
     private int MCTsDefaultPolicy(Object mcTsSim) {
@@ -56,8 +59,13 @@ public class MCTS {
     }
 
     private Object MCTsSim(State vl) {
+        while (/*is not terminal*/ ) {
+            if()
+        }
         return null;
     }
+
+
 
 
 } 
