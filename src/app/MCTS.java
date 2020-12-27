@@ -17,7 +17,7 @@ public class MCTS {
      *  @param n initial state
      * @return a list of  States from all possibles states from  n
      */
-	private final List<State> sucesssores(State s, Player p) {
+	private final List<State> sucs(State s, Player p) {
 		List<State> sucs = new ArrayList<>();
 		List<Ilayout> children = s.layout().children(p);
 		for (Ilayout e : children) {
@@ -28,7 +28,21 @@ public class MCTS {
 		}
 		return sucs;
     }
-    
+        /**
+     *  @param n initial state
+     * @return a list of  States from all possibles states from  n, ordered by formula
+     */
+	private final List<State> sucsOrdered(State s, Player p) {
+        PriorityQueue<State> sucs = new PriorityQueue<>(cmpState);
+		List<Ilayout> children = s.layout().children(p);
+		for (Ilayout e : children) {
+			if (s.parent() == null || !e.equals(s.parent().layout())) {
+				State nn = new State(e,p.opponent(),0,0,s);
+				sucs.add(nn);
+			}
+		}
+		return new ArrayList<State>(sucs);
+    }
     Comparator<State> cmpState = new Comparator<State>(){
         private double stateExp(State o){
             try {
@@ -58,11 +72,10 @@ public class MCTS {
     public final void MCTsSearch(Ilayout s0, Player p){
         State v0 = new State(s0,p,0,0,null);
         long startTime = System.nanoTime();
-        PriorityQueue<State> pq = new PriorityQueue<>(cmpState);
-        pq.add(v0);
         while(((System.nanoTime() - startTime)/1_000_000_000.0) < 121){
-            State vl = MCTsTreePolicy(v0); 
-            int win_or_loss = MCTsDefaultPolicy(MCTsSim(vl));
+            State vl = MCTsTreePolicy(v0, p); 
+            for(int i = 0; i < 10000;i++)
+                vl = MCTsSim(vl,p);
             vl = backPropagation(vl, win_or_loss);
         }  
         //return MCTsBestChild(v0);
@@ -79,15 +92,25 @@ public class MCTS {
         return 0;
     }
 
-    private State MCTsTreePolicy(State v0) {
-        return null;
+    private State MCTsTreePolicy(State v0,Player p) {
+        v0.setChildArray(sucsOrdered(v0,p));
+        State vl = v0.childArray().get(0);
+        v0.childArray().remove(0);
+        return vl;
     }
 
-    private Object MCTsSim(State vl) {
-        while (/*is not terminal*/ ) {
-            if()
+    private State MCTsSim(State vl, Player p) {
+        char status = ((Board) vl.layout()).status();
+        Board b = new Board((Board) vl.layout());
+        while ( status != 'v' && status != 'f' ) {
+            b=b.randMove(p);
+            p=p.opponent();
+            status = b.status();
         }
-        return null;
+        if(status=='v')
+            vl.addWinScore(1);
+        vl.visit();
+        return vl;
     }
 
 

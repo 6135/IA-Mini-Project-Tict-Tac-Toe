@@ -206,29 +206,6 @@ public class Board implements Ilayout, Cloneable {
 		return s.toString();
 	}
 
-	/**
-	 * 
-	 * @param ss A List of Node Stacks to be copied
-	 * @return A Copy of the aforementioned list
-	 */
-	public List<Stack<Node>> cloneStacks(List<Stack<Node>> ss){
-		List<Stack<Node>> cloned = new ArrayList<>();
-		for(Stack<Node> s : ss)
-			cloned.add(cloneStack(s));
-		return cloned;
-	}
-	/**
-	 * 
-	 * @param s Node stack to be copied
-	 * @return A copy of the aforementioned stack
-	 */
-	private Stack<Node> cloneStack(Stack<Node> s){
-		Stack<Node> newS = new Stack<>();
-		for(Node n : s)
-			newS.add(n);
-		return newS;
-	}
-
 	public Board randMove(Player p){
 		Board copy = new Board(this);
 		int i = rand.nextInt(dim*dim);
