@@ -23,14 +23,15 @@ public class Board implements Ilayout, Cloneable {
 	 * This function creates a new Board(child) with a List of Stacks generated in the function children
 	 * @param sts List of Stacks of the board
 	 */
-	public Board(String str){
+	public Board(String str, Player p){
 		board= new char[dim][dim];
-		int si=0;
 		int pos=Character.getNumericValue(str.charAt(0));
 		int r=(dim *(int)(pos/dim))-1;
 		int c=(pos%dim)-1;
-		board[r][c]='X';
+		board[r][c]=p.getSymbol();
 	}
+
+
 
 	/**
 	 * This function creates a new Board with the same List of Stacks and dim as the source

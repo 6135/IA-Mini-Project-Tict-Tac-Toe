@@ -8,12 +8,15 @@ public class State {
     private Player player;
     private int visitCount;
     private double winScore;
-    
-    public State(Ilayout layout, Player player, int visitCount, double winScore){
-        this.layout = layout;
+    private State parent;
+    private List<State> childArray;
+
+    public State(Ilayout s0, Player player, int visitCount, double winScore,State parent){
+        this.layout = s0;
         this.player = player;
         this.visitCount = visitCount;
         this.winScore = winScore;
+        this.parent=parent;
     }
 
     public State(State src){
@@ -21,6 +24,8 @@ public class State {
         this.player = src.player;
         this.visitCount = src.visitCount;
         this.winScore = src.winScore;
+        this.parent=src.parent;
+        this.childArray=src.childArray;
     }
 
     public Ilayout layout() { return layout; }
@@ -31,7 +36,11 @@ public class State {
     public void setLayout(Ilayout layout) { this.layout = new Board((Board) layout); }
     public void setPlayer(Player player) { this.player = player; }
     public void setVisitCount(int visitCount) { this.visitCount = visitCount; }
-    public void setWinScore(double winScore) { this.winScore = winScore; }
+    public void addWinScore(double winScore) { this.winScore += winScore; }
+    public State parent(){return this.parent;}
+    public void setParent(State parent){this.parent=parent;}
+    public void setChildArray(List<State> childArray){this.childArray=childArray;}
+    public List<State> childArray() { return childArray; }
     
     public void visit(){this.visitCount++;}
 
