@@ -117,7 +117,6 @@ public class Board implements Ilayout, Cloneable {
 	
     public char status(Player p){
 		return victory(p) ? 'v' : victory(p.opponent()) ? 'l' : full() ? 'd' : 'i';
-        
     }
 
     public boolean victory(){
@@ -205,7 +204,17 @@ public class Board implements Ilayout, Cloneable {
 		}
 		return s.toString();
 	}
-
+	public Board move(Player p, int pos) throws IndexOutOfBoundsException,IllegalStateException{
+		if(pos > 8 || pos < 0)
+			throw new IndexOutOfBoundsException("Position must be a value between 0 and 8");
+		Board copy = new Board(this);
+		int r = (int) (pos/dim);
+		int c = (pos%dim);
+		if(copy.board[r][c] != '\0')
+			throw new IllegalStateException("This spot is already filled in, try a new move");
+		else copy.board[r][c] = p.getSymbol();
+		return copy;	
+	}
 	public Board randMove(Player p){
 		Board copy = new Board(this);
 		int i = rand.nextInt(dim*dim);

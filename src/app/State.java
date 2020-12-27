@@ -3,7 +3,11 @@ package app;
 import java.util.ArrayList;
 import java.util.List;
 
-public class State {
+import org.junit.experimental.max.MaxCore;
+
+public class State implements Comparable<State>{
+    public static final int MAXVAL = Integer.MAX_VALUE;
+    public static final int MINVAL = Integer.MIN_VALUE+1;
     private Ilayout layout;
     private State parent;
 
@@ -11,7 +15,7 @@ public class State {
 
     private int visitCount;
     private int winScore;
-    private double treePolicy = -1;
+    private double treePolicy;
     private List<State> childArray;
 
     public State(Ilayout s0, Player player,State parent){
@@ -57,5 +61,17 @@ public class State {
             childArray.add(s);
         }
         return childArray;
+    }
+
+    public double CalcUCB(){
+        double firstExper = winScore()/visitCount();
+        double secondExper = Math.sqrt((2*(Math.log(parent().visitCount()))/visitCount()));
+        double expr = firstExper + secondExper;
+        return expr;
+    }
+
+    @Override
+    public int compareTo(State o) {
+        return (int) Math.signum(treePolicy()-o.treePolicy());
     }
 }
