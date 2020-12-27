@@ -70,21 +70,27 @@ public class MCTS {
         return selectionCandidate;
     }
 
-    public State MCTSExpansion(State root){
-        
+    public State MCTSExpansion(State selected){
+        List<Ilayout> children = selected.layout().children(selected.player().opponent());
+
+        for (Ilayout board : children) {
+           new State(board,selected.player().opponent(),selected);
+        }
+        return selected;
     }
 
-    private State MCTsBestChild(State root) {
+    private State MCTsSim(State vl, Player p) {
         return null;
-    }
+    }   
 
     private State MCTsBackPropagation(State vl, Player p) {
         return null;    
     }
 
-    private State MCTsSim(State vl, Player p) {
+    private State MCTsBestChild(State root) {
         return null;
     }
+    
 
 
 
