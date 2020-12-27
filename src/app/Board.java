@@ -244,7 +244,7 @@ public class Board implements Ilayout, Cloneable {
 		int random = Math.random()*(8);
 		int r=(dim *(int)(random/dim))-1;
 		int c=(random%dim)-1;
-		if(board[r][c])
+		if(board[r][c]== '')
 	}
 
 
