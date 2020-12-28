@@ -15,7 +15,7 @@ public class State implements Comparable<State> {
     private State parent;
     private Ilayout layout;
     private List<State> childArray;
-    private int winScore;
+    private double winScore;
     private int visitCount;
 
     public State(Ilayout layout, State parent) {
@@ -33,7 +33,7 @@ public class State implements Comparable<State> {
     public State getParent(){return parent;}
     public Ilayout getLayout(){return layout;}
     public List<State> getChildArray(){return childArray;}
-    public int getWinScore(){return winScore;}
+    public double getWinScore(){return winScore;}
     public int getVisitCount(){return visitCount;}
 
 
@@ -49,7 +49,7 @@ public class State implements Comparable<State> {
 
     }
     public void visit(){this.visitCount++;}
-    public void addWinScore(int add){this.winScore+=add;}
+    public void addWinScore(double add){this.winScore+=add;}
 
     public double ucbCalc(){
         int parentVisits = parent.getVisitCount();

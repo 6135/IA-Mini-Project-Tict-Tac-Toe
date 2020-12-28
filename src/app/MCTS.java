@@ -5,16 +5,19 @@ import java.util.Collections;
 /**
  * MCTS
  */
-public class MCTS {
-    Player mcts;
-    Player opponent;
+public class MCTS implements Agent{
+    private String agentName;
+    private char symbol;
+    private Agent opponent;
 
-    public MCTS(Player mcts){
-        this.mcts = mcts;
-        opponent = mcts.opponent();
+    public MCTS(char symbol, Agent opponent){
+        this.agentName = "mcts";
+        this.symbol = symbol;
+
     }
 
-    public State search(State root){
+    public Board move(Board b){
+        State root = new State(b, null);
         if(!root.getLayout().getPlayer().equals(opponent)){
             System.out.println("Wrong player were given");
             return null;
@@ -28,8 +31,10 @@ public class MCTS {
             /* Phase 3 - Simulation */
             for(State s : selected.getChildArray()){
                 char result = mctsStateSimulate(s);
+                mctsBackPropagation(selected, result);
             }
         }
+        return (Board) State.bestChildUCB(root).getLayout();
     }
     
     private State mctsStateSelection(State root){
@@ -57,8 +62,45 @@ public class MCTS {
         State temp = selected;
         while(temp != null){
             temp.visit();
-            if(result == 'v')
+            if(result == getSymbol())
+                temp.addWinScore(1.0);
+            else if (result == 'f')
+                temp.addWinScore(0.5);
+            temp = temp.getParent();
         }
+    }
+
+    @Override
+    public void setOpponent(Agent a) {this.opponent = a;}
+
+    @Override
+    public Agent opponent() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public char getSymbol() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void setSymbol(char symbol) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setName(String name) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

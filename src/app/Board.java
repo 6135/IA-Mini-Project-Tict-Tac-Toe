@@ -101,7 +101,7 @@ public class Board implements Ilayout, Cloneable {
 	}
 	
     public char status(){
-		return victory() ? (char) player.getPlayer() : loss() ? (char) player.opponent().getPlayer() : full() ? 'd' : 'i';
+		return victory() ? player.getSymbol() : loss() ? (char) player.opponent().getSymbol() : full() ? 'f' : 'i';
 	}
 	
 	private boolean anyVictory(){

@@ -1,39 +1,52 @@
 package app;
 
-public class Player {
-    private int playerID;
+import java.util.Scanner;
+
+public class Player implements Agent{
     private String playerName;
     private char c;
-    private Player opponent;
-    public Player(int player,String playerName, char symbol){
-        this.playerID=player;
+    private Agent opponent;
+    public Player(String playerName, char symbol){
         this.playerName = playerName;
         this.c = symbol;
     }
         
     @Override
     public int hashCode() {
-        return playerID;
+        return c;
     }
 
     @Override
     public boolean equals(Object o){ 
         if(o instanceof Player){
             Player p1 = (Player) o;
-            return p1.getSymbol() == getSymbol() && p1.getPlayer() == getPlayer() && playerName.equals(p1.getPlayerName());
+            return p1.getSymbol() == getSymbol() && playerName.equals(p1.getName());
         }
         return false;
     }
-
+    @Override
     public void setSymbol(char c){this.c = c;}
-    public void setOpponent(Player op){this.opponent = op;}
-    public void setPlayerName(String name){this.playerName = name;
-    }
+    @Override
+    public void setOpponent(Agent op){this.opponent = op;}
+    @Override
+    public void setName(String name){this.playerName = name;}
+    @Override
     public char getSymbol(){return c;}
-    public int getPlayer(){return playerID;}
-    public String getPlayerName(){return playerName;}
+    @Override
+    public String getName(){return playerName;}
+    @Override
+    public String toString(){return playerName ;}
+    
+    public Agent opponent(){return opponent;}
 
-    public String toString(){return Integer.toString(playerID);}
+    @Override
+    public Board move(Board b) {
+        Scanner sc = new Scanner(System.in);
+        b = b.move(sc.nextInt());
+        sc.close();
+        return b;
+    }
 
-    public Player opponent(){return opponent;}
+
+
 }
