@@ -85,7 +85,16 @@ public class MCTS {
     }
 
     private State MCTsBestChild(State root) {
-        return null;
+        State bestChild=root.childArray().get(0);
+        double bestUCB=0;
+        for (State child : root.childArray()) {
+            child.setTreePolicy(child.CalcUCB());
+            if(child.treePolicy()>bestUCB){
+                bestChild = child; 
+                bestUCB=child.treePolicy();
+            }
+        }
+        return bestChild;
     }
     
 
