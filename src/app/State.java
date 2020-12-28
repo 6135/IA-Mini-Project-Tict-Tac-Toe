@@ -2,10 +2,12 @@ package app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.experimental.max.MaxCore;
 
 public class State implements Comparable<State>{
+    private static final Random rand = new Random();
     public static final int MAXVAL = Integer.MAX_VALUE;
     public static final int MINVAL = Integer.MIN_VALUE+1;
     private Ilayout layout;
@@ -15,7 +17,6 @@ public class State implements Comparable<State>{
 
     private int visitCount;
     private int winScore;
-    private double treePolicy;
     private List<State> childArray;
 
     public State(Ilayout s0, Player player,State parent){
@@ -24,6 +25,7 @@ public class State implements Comparable<State>{
         this.visitCount = 1;
         this.winScore = 0;
         this.parent=parent;
+        childArray = new ArrayList<>();
     }
 
     public State(State src){
@@ -41,15 +43,15 @@ public class State implements Comparable<State>{
     public double winScore() { return winScore; }
     public State parent(){return this.parent;}
     public List<State> childArray() { return childArray; }
-    public double treePolicy(){return treePolicy;}
+    public double treePolicy(){return CalcUCB();}
+    public State getRandomChildState(){return childArray().get(rand.nextInt(childArray.size()));}
 
     public void setLayout(Ilayout layout) { this.layout = new Board((Board) layout); }
     public void setPlayer(Player player) { this.player = player; }
     public void setVisitCount(int visitCount) { this.visitCount = visitCount; }
     public void setParent(State parent){this.parent=parent;}
     public void setChildArray(List<State> childArray){this.childArray=childArray;}
-    public void setTreePolicy(double treePolicy) {this.treePolicy = treePolicy;}
-
+    
     public void addWinScore(double winScore) { this.winScore += winScore; }
     public void addVisits(double visitCount) { this.visitCount += visitCount; }
     public void visit(){this.visitCount++;}

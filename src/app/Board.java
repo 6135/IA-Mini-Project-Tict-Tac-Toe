@@ -102,7 +102,7 @@ public class Board implements Ilayout, Cloneable {
 			for(int j=0;j<dim;j++){
 				if(board[i][j]=='\0'){
 					b = (Board) this.clone();
-					b.board[i][j]=p.opponent().getSymbol();
+					b.board[i][j]=p.getSymbol();
 					children.put(b,index++);
 				}
 			}

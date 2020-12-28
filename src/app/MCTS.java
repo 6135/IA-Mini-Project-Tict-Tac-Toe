@@ -24,7 +24,6 @@ public class MCTS {
 		for (Ilayout e : children) {
 			if (s.parent() == null || !e.equals(s.parent().layout())) {
                 State nn = new State(e,p.opponent(),s);
-                nn.setTreePolicy(-s.treePolicy());
 				sucs.add(nn);
 			}
 		}
@@ -50,19 +49,21 @@ public class MCTS {
      */
     public final State MCTsSearch(State v0) {
         State root = v0;
-        root.setTreePolicy(State.MINVAL);
         int iterations =0;
+        Player p = root.player();
         while(iterations < 10000){
-            /**
-             * Selection
-             */
             State selected = MCTSSelection(root);
+            MCTSExpansion(selected,p);
+            for(State selectedToSim : selected.childArray()) {
+                char result = MCTsSim(selectedToSim, p);
+                MCTsBackPropagation(selectedToSim, p, result);
+            }
+           iterations++; 
         }
         return MCTsBestChild(root);
     }
 
     private State MCTSSelection(State root){
-        Player initial = root.player();
         State selectionCandidate = root;
         while(!selectionCandidate.childArray().isEmpty()){
             selectionCandidate=Collections.max(selectionCandidate.childArray());
@@ -70,18 +71,35 @@ public class MCTS {
         return selectionCandidate;
     }
 
-    public State MCTSExpansion(State selected){
-        List<State> children = sucs(selected,selected.player().opponent());
-        selected.setChildArray(children);
-        return selected;
+    public int MCTSExpansion(State selected, Player p){
+        Board b = (Board)selected.layout();
+        if(!b.terminal(p)) {
+            List<State> children = sucs(selected,selected.player().opponent());
+            selected.setChildArray(children);
+        }
+        return selected.childArray().size();
     }
 
-    private State MCTsSim(State vl, Player p) {
-        return null;
+    private char MCTsSim(State selected, Player p) {
+        Player initial = p;
+        Board b = ((Board) selected.layout());
+        char status = b.status(initial);
+        while(status == 'i'){
+            p=p.opponent();
+            b = b.randMove(p);
+            status = b.status(initial);
+        }
+        return status;
     }   
 
-    private State MCTsBackPropagation(State vl, Player p) {
-        return null;    
+    private void MCTsBackPropagation(State vl, Player p, char result) {
+        State previousState = vl.parent();
+        while(previousState != null){
+            previousState.visit();
+            if(previousState.player().equals(p.opponent()) && result == 'v')
+                previousState.addWinScore(1.0);
+            previousState = previousState.parent();
+        }       
     }
 
     private State MCTsBestChild(State root) {
