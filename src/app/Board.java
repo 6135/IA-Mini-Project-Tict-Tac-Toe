@@ -1,12 +1,12 @@
 package app;
 
-import java.lang.invoke.StringConcatException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Stack;
+import java.util.Set;
 
 public class Board implements Ilayout, Cloneable {
 
@@ -28,7 +28,6 @@ public class Board implements Ilayout, Cloneable {
 	 */
 	public Board(String str, Player p){
 		board= new char[dim][dim];
-		int si=0;
 		int pos=Character.getNumericValue(str.charAt(0));
 		int r = (int) (pos/dim);
 		int c = (pos%dim);
@@ -95,19 +94,18 @@ public class Board implements Ilayout, Cloneable {
 	 */
     @Override
     public List<Ilayout> children(Player p) {
-        HashMap<Ilayout, Integer> children = new HashMap<>();
+        List<Ilayout> children = new ArrayList<>();
 		Board b;
-		int index = 0;
 		for(int i=0;i<dim;i++){
 			for(int j=0;j<dim;j++){
 				if(board[i][j]=='\0'){
 					b = (Board) this.clone();
 					b.board[i][j]=p.getSymbol();
-					children.put(b,index++);
+					children.add(b);
 				}
 			}
 		}
-        return new ArrayList<>(children.keySet());
+        return new ArrayList<>(children);
 	}
 	
 	public boolean terminal(Player p){
@@ -136,7 +134,6 @@ public class Board implements Ilayout, Cloneable {
     private boolean checkRow(int row){
         if(board[row][0]=='\0')
             return false;
-        // else return board[row][0]==board[row][1] && board[row][1]==board[row][2];
         for (int i = 1; i < board[row].length; i++) 
             if(board[row][i-1] != board[row][i])
                 return false;
@@ -146,7 +143,6 @@ public class Board implements Ilayout, Cloneable {
     private boolean checkCol(int col){
         if(board[0][col]=='\0')
             return false;
-        // else return board[0][col]==board[1][col] && board[1][col]==board[2][col];
         for (int i = 1; i < board.length; i++)
             if(board[i-1][col] != board[i][col])
                 return false;
@@ -156,7 +152,6 @@ public class Board implements Ilayout, Cloneable {
     private boolean checkLRD(){
         if(board[0][0]=='\0')
             return false;
-        // else return board[0][0] == board[1][1] && board[1][1] == board[2][2];
         for (int i = 1; i < board.length; i++) 
             if(board[i-1][i-1] != board[i][i])
                 return false;
@@ -167,7 +162,6 @@ public class Board implements Ilayout, Cloneable {
         
         if(board[0][2]=='\0')
             return false;
-        // else return board[0][2] == board[1][1] && board[1][1] == board[2][0];
         for (int i = 1; i < board.length; i++) 
             if(board[i-1][board.length-i] != board[i][board.length-(i+1)])
                 return false;
@@ -224,6 +218,6 @@ public class Board implements Ilayout, Cloneable {
 			copy.board[r][c] = p.getSymbol();
 			return copy;
 		}
-		else return copy.randMove(p);
+		else return randMove(p);
 	}
 }
