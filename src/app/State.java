@@ -76,4 +76,9 @@ public class State implements Comparable<State>{
     public int compareTo(State o) {
         return (int) Math.signum(treePolicy()-o.treePolicy());
     }
+
+    @Override
+    public String toString() {
+        return layout.toString() + '\n' + this.treePolicy();
+    }
 }

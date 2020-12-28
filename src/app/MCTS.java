@@ -26,7 +26,8 @@ public class MCTS {
                 State nn = new State(e,p.opponent(),s);
 				sucs.add(nn);
 			}
-		}
+        }
+        s.setChildArray(sucs);
 		return sucs;
     }
 
@@ -51,7 +52,7 @@ public class MCTS {
         State root = v0;
         int iterations =0;
         Player p = root.player();
-        while(iterations < 10000){
+        while(iterations < 1000){
             State selected = MCTSSelection(root);
             MCTSExpansion(selected,p);
             for(State selectedToSim : selected.childArray()) {
@@ -60,13 +61,16 @@ public class MCTS {
             }
            iterations++; 
         }
-        return MCTsBestChild(root);
+        return MCTsBestChildSelectionMax(root);
     }
 
     private State MCTSSelection(State root){
         State selectionCandidate = root;
+        Player initial = root.player();
         while(!selectionCandidate.childArray().isEmpty()){
-            selectionCandidate=Collections.max(selectionCandidate.childArray());
+            if(selectionCandidate.player().equals(initial))
+                selectionCandidate = MCTsBestChildSelectionMax(selectionCandidate);
+            else selectionCandidate = MCTsBestChildSelectionMin(selectionCandidate);
         }
         return selectionCandidate;
     }
@@ -93,20 +97,29 @@ public class MCTS {
     }   
 
     private void MCTsBackPropagation(State vl, Player p, char result) {
-        State previousState = vl.parent();
+        State previousState = vl;
         while(previousState != null){
             previousState.visit();
-            if(previousState.player().equals(p.opponent()) && result == 'v')
+            //System.out.println(result);
+            if(result == 'v'){
                 previousState.addWinScore(1.0);
+            }
+                
             previousState = previousState.parent();
         }       
     }
-
-    private State MCTsBestChild(State root) {
+    private State MCTsBestChildSelectionMax(State root) {
         State bestChild=root.childArray().get(0);
-        for (State child : root.childArray()) 
+        for (State child : root.childArray())
             if(child.treePolicy()>bestChild.treePolicy())
-                bestChild = child;   
+                bestChild = child;
+        return bestChild;
+    }
+    private State MCTsBestChildSelectionMin(State root) {
+        State bestChild=root.childArray().get(0);
+        for (State child : root.childArray())
+            if(child.treePolicy()<bestChild.treePolicy())
+                bestChild = child;
         return bestChild;
     }
     

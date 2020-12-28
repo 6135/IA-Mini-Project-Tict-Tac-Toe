@@ -23,22 +23,22 @@ public class Main {
             Board b = new Board();
             MCTS mcts = new MCTS();
 
-            // System.out.println(b.toString());
-            // Player p = cpu1;
-            // System.out.println(b.terminal(p));
-            // while( !b.terminal(p) ) {
-            //     b = (Board) mcts.MCTsSearch(b, p).layout();
-            //     p = p.opponent();
-            //     System.out.println(b.toString());
-            //     System.out.println(b.terminal(p));
-            // }
-            // char status = b.status(cpu1);
-            // if(status == 'v')
-            //     System.out.println(cpu1.getPlayer() + " has won the game!");
-            // else if(status == 'l')
-            //     System.out.println(cpu1.opponent().getPlayer() + " has won the game!");
-            // else if(status == 'f')
-            //     System.out.println("Draw!");
+            System.out.println(b.toString());
+            Player p = cpu2;
+            System.out.println(b.terminal(p));
+            while( !b.terminal(p) ) {
+                b = (Board) mcts.MCTsSearch(new State(b,p,null)).layout();
+                p = p.opponent();
+                System.out.println(b.toString());
+                System.out.println(b.terminal(p));
+            }
+            char status = b.status(cpu1);
+            if(status == 'v')
+                System.out.println(cpu1.getPlayer() + " has won the game!");
+            else if(status == 'l')
+                System.out.println(cpu1.opponent().getPlayer() + " has won the game!");
+            else if(status == 'f')
+                System.out.println("Draw!");
         }else if(gm == 1) {
             Player p1 = new Player("Player 1");
             Player cpu = new Player("CPU");
