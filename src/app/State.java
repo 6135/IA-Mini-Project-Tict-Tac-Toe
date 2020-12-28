@@ -1,12 +1,8 @@
 package app;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.ToDoubleFunction;
 
 /**
  * State
@@ -21,6 +17,7 @@ public class State implements Comparable<State> {
     public State(Ilayout layout, State parent) {
         this.layout = layout;
         this.parent = parent;
+        childArray = new ArrayList<>();
     }
 
 
@@ -52,6 +49,8 @@ public class State implements Comparable<State> {
     public void addWinScore(double add){this.winScore+=add;}
 
     public double ucbCalc(){
+        if(visitCount == 0)
+            return Double.MAX_VALUE;
         int parentVisits = parent.getVisitCount();
         double expr1 = this.winScore / this.visitCount; 
         double expr2 = Math.sqrt(2) * (Math.sqrt((Math.log(parentVisits) / this.visitCount)));
@@ -64,14 +63,14 @@ public class State implements Comparable<State> {
     }
 
     public static State bestChildUCB(State root){
-        if(root.getChildArray().isEmpty())
-            return null;
-        else return Collections.max(root.getChildArray());
+        return Collections.max(root.getChildArray());
     }
     public static State bestEnemyChildUCB(State root){
-        if(root.getChildArray().isEmpty())
-            return null;
-        else return Collections.min(root.getChildArray());
+        return Collections.min(root.getChildArray());
+    }
+    @Override
+    public String toString() {
+        return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
     }
 
 }

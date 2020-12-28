@@ -26,8 +26,8 @@ public interface Ilayout {
     public Board randomMove();
     public char status();
     public void resultMessage();
-    public void setPlayer(Player player);
-    public Player getPlayer();
+    public void setAgent(Agent agent);
+    public Agent getAgent();
     public boolean terminal();
     int getDim();
 }

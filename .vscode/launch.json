@@ -9,14 +9,16 @@
             "type": "java",
             "name": "Launch Current File",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "${file}",
+            //"args": [">","res.txt"]
         },
         {
             "type": "java",
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "app.Main",
-            "projectName": "IA-Mini-Project-Tict-Tac-Toe_5b7f9963"
+            "projectName": "IA-Mini-Project-Tict-Tac-Toe_5b7f9963",
+            //"args": [">","res.txt"]
         }
     ]
 }

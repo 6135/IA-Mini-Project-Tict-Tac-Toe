@@ -2,23 +2,23 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class Board implements Ilayout, Cloneable {
 
 	private int dim = 3;
 	private char board [][];
-	private Player player;
+	/**
+	 * Player that has the next move, not the one that already moved
+	 */
+	private Agent player;
 	private Random rand = new Random();
 	/**
 	 * This function creates a new Board(initial configuration or goal) based on a input string
 	 * @param str configuration of the board 
 	 */
-	public Board(Player p){
+	public Board(Agent p){
 		this.board = new char[dim][dim];
 		this.player = p;
 	}
@@ -88,7 +88,7 @@ public class Board implements Ilayout, Cloneable {
 				if(board[i][j]=='\0'){
 					b = (Board) this.clone();
 					b.player = player.opponent();
-					b.board[i][j]=b.player.getSymbol();
+					b.board[i][j]=player.getSymbol();
 					children.add(b);
 				}
 			}
@@ -112,18 +112,18 @@ public class Board implements Ilayout, Cloneable {
 	}
 
 	public boolean loss(){
-		Player opponent = player.opponent();
+		Agent opponent = player.opponent();
         for (int i = 0; i < 3; i++)
             if((checkRow(i) && board[i][0] == opponent.getSymbol()) || (checkCol(i) && board[0][i] == opponent.getSymbol()))
                 return true;
-        return (checkLRD() || checkRLD()) && board[(int)dim/2][(int)dim/2]==opponent.getSymbol();		
+        return (checkLRD() || checkRLD()) && board[dim/2][dim/2]==opponent.getSymbol();		
 	}
 
     public boolean victory(){
         for (int i = 0; i < 3; i++)
             if((checkRow(i) && board[i][0] == player.getSymbol()) || (checkCol(i) && board[0][i] == player.getSymbol()))
                 return true;
-        return (checkLRD() || checkRLD()) && board[(int)dim/2][(int)dim/2]==player.getSymbol();
+        return (checkLRD() || checkRLD()) && board[dim/2][dim/2]==player.getSymbol();
     }
 
     private boolean checkRow(int row){
@@ -185,25 +185,42 @@ public class Board implements Ilayout, Cloneable {
 			for(int j = 0; j < dim; j++){
 				char c = board[i][j];
 				if(c =='\0')
-					s.append("-");
+					s.append("- ");
 				else
-					s.append(c);
+					s.append(c+" ");
 			}
 			s.append('\n');
 		}
 		return s.toString();
 	}
+	
+	public String flatToString(){
+		StringBuilder s = new StringBuilder();
+		for(int i = 0; i < dim; i++){
+			for(int j = 0; j < dim; j++){
+				char c = board[i][j];
+				if(c =='\0')
+					s.append("-");
+				else
+					s.append(c);
+			}
+			s.append(" ");
+		}
+		return s.toString();
+	}
+
 	public Board move(int pos) throws IndexOutOfBoundsException,IllegalStateException{
+		//System.out.println("Active agent before move" + player.getName());
 		if(pos > 8 || pos < 0)
 			throw new IndexOutOfBoundsException("Position must be a value between 0 and 8");
-		Player opponent = player.opponent();
 		Board copy = new Board(this);
 		int r = (pos/dim);
 		int c = (pos%dim);
 		if(copy.board[r][c] != '\0')
 			throw new IllegalStateException("This spot is already filled in, try a new move");
 		else copy.board[r][c] = player.getSymbol();
-		copy.player=opponent;
+		copy.player=player.opponent();
+		//System.out.println("Active agent after move: " + copy.player.getName());
 		return copy;	
 	}
 
@@ -234,16 +251,17 @@ public class Board implements Ilayout, Cloneable {
 	public void resultMessage() {
 		char status = status();
 		System.out.println(status);
-		if(status == 'v')
-			System.out.println(player.getPlayerName() + " has won the game");
+		if(status == player.getSymbol())
+			System.out.println(player.getName() + " has won the game");
 		else if(status == 'f')
 			System.out.println("Game draw!");
-		else if(status == 'l')
-			System.out.println(player.opponent().getPlayerName() + " has won the game");
+		else if(status == player.opponent().getSymbol())
+			System.out.println(player.opponent().getName() + " has won the game");
 		else System.out.println("Unknown message.");
 
 	}
-
-	public void setPlayer(Player player){this.player = player;}
-	public Player getPlayer(){return player;}
+	@Override
+	public void setAgent(Agent agent){this.player = agent;}
+	@Override
+	public Agent getAgent(){return player;}
 }

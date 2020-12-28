@@ -43,7 +43,6 @@ public class Player implements Agent{
     public Board move(Board b) {
         Scanner sc = new Scanner(System.in);
         b = b.move(sc.nextInt());
-        sc.close();
         return b;
     }
 

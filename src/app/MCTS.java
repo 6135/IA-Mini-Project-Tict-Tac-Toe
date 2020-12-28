@@ -1,7 +1,5 @@
 package app;
 
-import java.util.Collections;
-
 /**
  * MCTS
  */
@@ -10,51 +8,57 @@ public class MCTS implements Agent{
     private char symbol;
     private Agent opponent;
 
-    public MCTS(char symbol, Agent opponent){
-        this.agentName = "mcts";
+    public MCTS(char symbol){
+        this.agentName = "CPU";
         this.symbol = symbol;
 
     }
 
     public Board move(Board b){
         State root = new State(b, null);
-        if(!root.getLayout().getPlayer().equals(opponent)){
-            System.out.println("Wrong player were given");
+        if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < 10_000;iteration++){
-            /* Phase 1 - Selection*/
+        for(int iteration = 0; iteration < 10000;iteration++){
+            /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
-            /* Phase 2 - Expansion*/
+            /* Phase 2 - Expansion */
             if(!selected.getLayout().terminal())
                 mctsStateExpansion(selected);
             /* Phase 3 - Simulation */
             for(State s : selected.getChildArray()){
                 char result = mctsStateSimulate(s);
-                mctsBackPropagation(selected, result);
+                /* Phase 4 - BackPropagation */
+                mctsBackPropagation(s, result);
             }
         }
+        System.out.println(root.getVisitCount() + " " + root.getWinScore());
+        System.out.println(root.getChildArray());
         return (Board) State.bestChildUCB(root).getLayout();
     }
     
     private State mctsStateSelection(State root){
+        // TODO: Method is probably wron taking into cosideration that ROOT stores the player that has the next Move and not the player that has moved
         State selected = root;
         while(!selected.getChildArray().isEmpty())
-            if(selected.getLayout().getPlayer().equals(mcts))
+            selected = State.bestChildUCB(selected);
+            /*if(selected.getLayout().getAgent().equals(this))
                 selected = State.bestEnemyChildUCB(selected);
-            else if(selected.getLayout().getPlayer().equals(opponent))
-                selected = State.bestChildUCB(selected);
+            else if(selected.getLayout().getAgent().equals(opponent))
+                selected = State.bestChildUCB(selected);*/
         return selected;
     }
 
     private void mctsStateExpansion(State selected) {
         selected.makeChildren();
+        //System.out.println(selected.getChildArray());
     }
 
     private char mctsStateSimulate(State selected){
         Board temp = new Board((Board)selected.getLayout());
         while(!temp.terminal())
-            temp.randomMove();
+            temp = temp.randomMove();
+            
         return temp.status();
     }
 
@@ -63,9 +67,9 @@ public class MCTS implements Agent{
         while(temp != null){
             temp.visit();
             if(result == getSymbol())
-                temp.addWinScore(1.0);
-            else if (result == 'f')
-                temp.addWinScore(0.5);
+                temp.addWinScore(1);
+             if(result == 'f')
+                 temp.addWinScore(0.5);
             temp = temp.getParent();
         }
     }
@@ -74,33 +78,29 @@ public class MCTS implements Agent{
     public void setOpponent(Agent a) {this.opponent = a;}
 
     @Override
-    public Agent opponent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public Agent opponent() {return opponent;}
 
     @Override
-    public char getSymbol() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+    public char getSymbol() {return symbol;}
 
     @Override
-    public void setSymbol(char symbol) {
-        // TODO Auto-generated method stub
-
-    }
+    public void setSymbol(char symbol) {this.symbol = symbol;}
 
     @Override
-    public void setName(String name) {
-        // TODO Auto-generated method stub
-
-    }
+    public void setName(String name) {this.agentName = name;}
 
     @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+    public String getName() {return agentName;}
+    @Override
+    public int hashCode() {
+        return getSymbol();
     }
-
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof MCTS){
+            MCTS mcts = (MCTS) o;
+            return getName() == mcts.getName() && getSymbol() == mcts.getSymbol();
+        }
+        return false;
+    }
 }
