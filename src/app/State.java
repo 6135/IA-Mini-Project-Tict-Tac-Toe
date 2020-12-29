@@ -2,6 +2,7 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -70,6 +71,17 @@ public class State implements Comparable<State> {
     public static State bestEnemyChildUCB(State root){
         return Collections.min(root.getChildArray());
     }
+    
+    private static Comparator<State> cmpMaxScore = new Comparator<>() {
+        public int compare(State o1, State o2) {
+            return (int) Math.signum(o1.visitCount - o2.visitCount);
+        }
+    };
+
+    public static State bestChildScore(State root) {
+        return Collections.max(root.getChildArray(), cmpMaxScore);
+    }
+    
     @Override
     public String toString() {
         return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
@@ -78,5 +90,13 @@ public class State implements Comparable<State> {
     public State getRandomChild(){
         int nextRandom = rand.nextInt(childArray.size());
         return childArray.get(nextRandom);
+    }
+
+    public Agent agentHasNextMove(){
+        return ((Board) layout).getAgent();
+    }
+
+    public Agent agentThatMoved(){
+        return agentHasNextMove().opponent();
     }
 }

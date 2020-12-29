@@ -19,7 +19,8 @@ public class MCTS implements Agent{
         if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < 10000;iteration++){
+        for(int iteration = 0; iteration < 1000;iteration++){
+            //System.out.println(iteration);
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
             /* Phase 2 - Expansion */
@@ -29,32 +30,39 @@ public class MCTS implements Agent{
             for(State s : selected.getChildArray()){
                 char result = mctsStateSimulate(s);
                 /* Phase 4 - BackPropagation */
+                //System.out.println(result);
                 mctsBackPropagation(s, result);
             }
         }
-        System.out.println(root.getVisitCount() + " " + root.getWinScore());
-        System.out.println(root.getChildArray());
-        return (Board) State.bestChildUCB(root).getLayout();
+        //System.out.println(root.getVisitCount() + " " + root.getWinScore());
+        //System.out.println(root.getChildArray());
+        return (Board) State.bestChildScore(root).getLayout();
     }
     
     private State mctsStateSelection(State root){
-        // TODO: Method is probably wron taking into cosideration that ROOT stores the player that has the next Move and not the player that has moved
+        // TODO: Method is probably wrong taking into cosideration that ROOT stores the player that has the next Move and not the player that has moved
         State selected = root;
         while(!selected.getChildArray().isEmpty())
-            if(selected.getLayout().getAgent().equals(this))
+            // if(selected.getLayout().getAgent().equals(this))
                 selected = State.bestChildUCB(selected);
-            else if(selected.getLayout().getAgent().equals(opponent))
-                selected = State.bestEnemyChildUCB(selected);
+            // else if(selected.getLayout().getAgent().equals(opponent))
+                // selected = State.bestEnemyChildUCB(selected);
         return selected;
     }
 
     private void mctsStateExpansion(State selected) {
-        selected.makeChildren();
+        if(!selected.getLayout().terminal())
+            selected.makeChildren();
         //System.out.println(selected.getChildArray());
     }
 
     private char mctsStateSimulate(State selected){
         Board temp = new Board((Board)selected.getLayout());
+        if(temp.status() == opponent.getSymbol()){
+            //System.out.println("here");
+            selected.setWinCount(Integer.MIN_VALUE);
+            return temp.status();
+        }
         while(!temp.terminal())
             temp = temp.randomMove();
             
@@ -65,8 +73,20 @@ public class MCTS implements Agent{
         State temp = selected;
         while(temp != null){
             temp.visit();
-            if(result == getSymbol())
-                temp.addWinScore(1);
+            // if(result == 'f'){
+            //     //System.out.println(temp.agentThatMoved().getName());
+            //     if(temp.agentThatMoved().equals(this))
+            //         temp.addWinScore(0.5);
+            //     else temp.addWinScore(-0.5);
+            // }
+            // if(result == getSymbol()){
+            //     //System.out.println(temp.agentThatMoved().getName());
+            //     if(temp.agentThatMoved().equals(this))
+            //         temp.addWinScore(1);
+            //     else temp.addWinScore(-1);
+            // }
+            if(temp.agentThatMoved().getSymbol() == result)
+                temp.addWinScore(1.0);
             if(result == 'f')
                 temp.addWinScore(0.5);
             temp = temp.getParent();
