@@ -47,7 +47,7 @@ public class Main {
         Agent agent = p1;
         int itr = 0;
         int player1 =0,player2 =0,draw =0;
-        while(itr < 50){
+        while(itr < 10){
             System.out.println(itr);
             b = new Board(agent);
             while(!b.terminal()){

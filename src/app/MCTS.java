@@ -41,11 +41,10 @@ public class MCTS implements Agent{
         // TODO: Method is probably wron taking into cosideration that ROOT stores the player that has the next Move and not the player that has moved
         State selected = root;
         while(!selected.getChildArray().isEmpty())
-            selected = State.bestChildUCB(selected);
-            /*if(selected.getLayout().getAgent().equals(this))
-                selected = State.bestEnemyChildUCB(selected);
+            if(selected.getLayout().getAgent().equals(this))
+                selected = State.bestChildUCB(selected);
             else if(selected.getLayout().getAgent().equals(opponent))
-                selected = State.bestChildUCB(selected);*/
+                selected = State.bestEnemyChildUCB(selected);
         return selected;
     }
 
@@ -68,8 +67,8 @@ public class MCTS implements Agent{
             temp.visit();
             if(result == getSymbol())
                 temp.addWinScore(1);
-             if(result == 'f')
-                 temp.addWinScore(0.5);
+            if(result == 'f')
+                temp.addWinScore(0.5);
             temp = temp.getParent();
         }
     }

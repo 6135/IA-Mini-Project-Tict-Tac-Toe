@@ -3,6 +3,7 @@ package app;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * State
@@ -13,7 +14,8 @@ public class State implements Comparable<State> {
     private List<State> childArray;
     private double winScore;
     private int visitCount;
-
+    private Random rand = new Random();
+    
     public State(Ilayout layout, State parent) {
         this.layout = layout;
         this.parent = parent;
@@ -73,4 +75,8 @@ public class State implements Comparable<State> {
         return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
     }
 
+    public State getRandomChild(){
+        int nextRandom = rand.nextInt(childArray.size());
+        return childArray.get(nextRandom);
+    }
 }

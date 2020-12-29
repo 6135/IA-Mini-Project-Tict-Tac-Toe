@@ -2,6 +2,7 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -93,7 +94,8 @@ public class Board implements Ilayout, Cloneable {
 				}
 			}
 		}
-        return new ArrayList<>(children);
+		Collections.shuffle(children);
+        return children;
 	}
 	
 	public boolean terminal(){
