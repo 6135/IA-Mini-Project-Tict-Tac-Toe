@@ -25,14 +25,114 @@ public class PuzzleUnitTests {
 
     @Test (timeout = 10000)
     public void testChildren(){
-        //todo
+        char [][] board ={
+            {' ','X',' '},
+            {' ','O',' '},
+            {' ',' ','X'}
+        };
+
+        Board b = new Board(board);
+        
+        Player cpu2 = new Player("cpu2");
+
+        cpu2.setSymbol('O');
+        
+        List<Ilayout> children = new ArrayList<>();
+        children.addAll(b.children(cpu2));
+        char [][] c1 ={
+            {'O','X',' '},
+            {' ','O',' '},
+            {' ',' ','X'}
+        };
+        char [][] c2 ={
+            {' ','X','O'},
+            {' ','O',' '},
+            {' ',' ','X'}
+        };
+        char [][] c3 ={
+            {' ','X',' '},
+            {'O','O',' '},
+            {' ',' ','X'}
+        };
+        char [][] c4 ={
+            {' ','X',' '},
+            {' ','O','O'},
+            {' ',' ','X'}
+        };
+        char [][] c5 ={
+            {' ','X',' '},
+            {' ','O',' '},
+            {'O',' ','X'}
+        };
+        char [][] c6 ={
+            {' ','X',' '},
+            {' ','O',' '},
+            {' ','O','X'}
+        };
+        assertTrue(children.contains(new Board(c1)));
+        assertTrue(children.contains(new Board(c2)));
+        assertTrue(children.contains(new Board(c3)));
+        assertTrue(children.contains(new Board(c4)));
+        assertTrue(children.contains(new Board(c5)));
+        assertTrue(children.contains(new Board(c6)));
         
     }
 
     @Test (timeout = 15000)
     public void testChildren2(){
-        //todo
+        char [][] board ={
+            {' ','X','O'},
+            {' ','O','O'},
+            {'X',' ','X'}
+        };
+
+        Board b = new Board(board);
+        
+        Player cpu1 = new Player("cpu1");
+
+        cpu1.setSymbol('X');
+        
+        List<Ilayout> children = new ArrayList<>();
+        children.addAll(b.children(cpu1));
+        char [][] c1 ={
+            {'X','X','O'},
+            {' ','O','O'},
+            {'X',' ','X'}
+        };
+        char [][] c2 ={
+            {' ','X','O'},
+            {'X','O','O'},
+            {'X',' ','X'}
+        };
+        char [][] c3 ={
+            {' ','X','O'},
+            {' ','O','O'},
+            {'X','X','X'}
+        };
+        assertTrue(children.contains(new Board(c1)));
+        assertTrue(children.contains(new Board(c2)));
+        assertTrue(children.contains(new Board(c3)));
     }
+
+    @Test (timeout = 3000)
+    public void testStatus(){
+        char [][] board ={
+            {' ','X','O'},
+            {' ','O','O'},
+            {'X','X','X'}
+        };
+
+        Board b = new Board(board);
+        Player cpu1 = new Player("cpu1");
+
+        cpu1.setSymbol('X');
+
+        b.status(cpu1);
+        assertTrue()
+
+
+    }
+
     @Test (timeout = 3000)
     public void testSolve(){
         //todo
@@ -65,8 +165,5 @@ public class PuzzleUnitTests {
         //todo
     }
 
-    @Test (timeout = 6000000)
-    public void testHeuristics(){
-        //todo
-    }
+    
 }

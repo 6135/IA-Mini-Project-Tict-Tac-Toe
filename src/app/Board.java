@@ -22,7 +22,15 @@ public class Board implements Ilayout, Cloneable {
 	public Board(Agent p){
 		this.board = new char[dim][dim];
 		this.player = p;
+
 	}
+
+	public Board(char[][] b){
+		this.board = new char[dim][dim];
+		for(int i = 0; i < dim; i++)
+			System.arraycopy(b[i], 0,this.board[i],0,dim);
+	}
+
 
 	/**
 	 * This function creates a new Board with the same List of Stacks and dim as the source
