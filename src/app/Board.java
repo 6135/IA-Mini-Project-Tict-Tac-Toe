@@ -22,6 +22,11 @@ public class Board implements Ilayout, Cloneable {
 
 	}
 
+	public Board(char[][] b){
+		this.board = new char[dim][dim];
+		for(int i = 0; i < dim; i++)
+			System.arraycopy(b[i], 0,this.board[i],0,dim);
+	}
 	/**
 	 * This function creates a new Board(child) with a List of Stacks generated in the function children
 	 * @param sts List of Stacks of the board
