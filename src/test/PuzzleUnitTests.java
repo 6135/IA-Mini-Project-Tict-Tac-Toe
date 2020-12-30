@@ -81,54 +81,57 @@ public class PuzzleUnitTests {
     @Test (timeout = 15000)
     public void testChildren2(){
         char [][] board ={
-            {' ','X','O'},
-            {' ','O','O'},
-            {'X',' ','X'}
+            {'\0','X','O'},
+            {'\0','O','O'},
+            {'X','\0','X'}
         };
-
-        Board b = new Board(board);
-        
-        Player cpu1 = new Player("cpu1");
-
-        cpu1.setSymbol('X');
+        Agent cpu1 = new MCTS('X');
+        Agent cpu2 = new MCTS('O');
+        cpu2.setOpponent(cpu1);
+        Board b = new Board(board,cpu1);
         
         List<Ilayout> children = new ArrayList<>();
-        children.addAll(b.children(cpu1));
+        children.addAll(b.children());
+
         char [][] c1 ={
             {'X','X','O'},
-            {' ','O','O'},
-            {'X',' ','X'}
+            {'\0','O','O'},
+            {'X','\0','X'}
         };
         char [][] c2 ={
-            {' ','X','O'},
+            {'\0','X','O'},
             {'X','O','O'},
-            {'X',' ','X'}
+            {'X','\0','X'}
         };
         char [][] c3 ={
-            {' ','X','O'},
-            {' ','O','O'},
+            {'\0','X','O'},
+            {'\0','O','O'},
             {'X','X','X'}
         };
-        assertTrue(children.contains(new Board(c1)));
-        assertTrue(children.contains(new Board(c2)));
-        assertTrue(children.contains(new Board(c3)));
+        
+
+        
+        assertTrue(children.contains(new Board(c1,cpu2)));
+        assertTrue(children.contains(new Board(c2,cpu2)));
+        assertTrue(children.contains(new Board(c3,cpu2)));
     }
 
     @Test (timeout = 3000)
     public void testStatus1(){
         char [][] board ={
-            {' ','X','O'},
-            {' ','O','O'},
+            {'\0','X','O'},
+            {'\0','O','O'},
             {'X','X','X'}
         };
-
-        Board b = new Board(board);
-        Player cpu1 = new Player("cpu1");
+        Agent cpu1 = new MCTS('X');
+        Board b = new Board(board,cpu1);
+        
 
         cpu1.setSymbol('X');
 
-        char s=b.status(cpu1);
-        assertTrue(s='v');
+        char s=b.status();
+        
+        assertTrue(s=='X');
 
 
     }
@@ -141,13 +144,11 @@ public class PuzzleUnitTests {
             {'X','O','X'}
         };
 
-        Board b = new Board(board);
-        Player cpu1 = new Player("cpu1");
+        Agent cpu1 = new MCTS('X');
+        Board b = new Board(board,cpu1);
 
-        cpu1.setSymbol('X');
-
-        char s=b.status(cpu1);
-        assertTrue(s='d');
+        char s=b.status();
+        assertTrue(s=='f');
 
 
     }
@@ -155,18 +156,19 @@ public class PuzzleUnitTests {
     @Test (timeout = 3000)
     public void testStatus3(){
         char [][] board ={
-            {' ','X','O'},
+            {'\0','X','O'},
             {'O','O','X'},
             {'X','O','X'}
         };
 
-        Board b = new Board(board);
-        Player cpu1 = new Player("cpu1");
+        Agent cpu1 = new MCTS('X');
+        Board b = new Board(board,cpu1);
+        
+;
 
-        cpu1.setSymbol('X');
-
-        char s=b.status(cpu1);
-        assertTrue(s='i');
+        char s=b.status();
+        
+        assertTrue(s=='i');
     }
 
     @Test (timeout = 3000)

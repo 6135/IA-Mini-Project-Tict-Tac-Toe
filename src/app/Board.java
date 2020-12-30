@@ -25,8 +25,9 @@ public class Board implements Ilayout, Cloneable {
 
 	}
 
-	public Board(char[][] b){
+	public Board(char[][] b,Agent p){
 		this.board = new char[dim][dim];
+		this.player = p;
 		for(int i = 0; i < dim; i++)
 			System.arraycopy(b[i], 0,this.board[i],0,dim);
 	}
