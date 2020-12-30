@@ -26,14 +26,17 @@ public class PuzzleUnitTests {
     @Test (timeout = 10000)
     public void testChildren(){
         char [][] board ={
-            {' ','X',' '},
-            {' ','O',' '},
-            {' ',' ','X'}
+            {'\0','X','\0'},
+            {'\0','O','\0'},
+            {'\0','\0','X'}
         };
 
+        Agent cpu1 = new MCTS('X');
+        Agent cpu2 = new MCTS('O');
+        cpu2.setOpponent(cpu1);
         Board b = new Board(board);
         
-        Player cpu2 = new Player("cpu2");
+        
 
         cpu2.setSymbol('O');
         
