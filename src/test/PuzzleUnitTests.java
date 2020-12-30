@@ -127,8 +127,8 @@ public class PuzzleUnitTests {
 
         cpu1.setSymbol('X');
 
-        b.terminal(cpu1);
-        assert
+        b.status(cpu1);
+        assertTrue()
 
 
     }
