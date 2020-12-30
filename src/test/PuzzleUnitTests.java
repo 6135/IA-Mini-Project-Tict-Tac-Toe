@@ -115,7 +115,7 @@ public class PuzzleUnitTests {
     }
 
     @Test (timeout = 3000)
-    public void testStatus(){
+    public void testStatus1(){
         char [][] board ={
             {' ','X','O'},
             {' ','O','O'},
@@ -127,10 +127,46 @@ public class PuzzleUnitTests {
 
         cpu1.setSymbol('X');
 
-        b.status(cpu1);
-        assertTrue()
+        char s=b.status(cpu1);
+        assertTrue(s='v');
 
 
+    }
+
+    @Test (timeout = 3000)
+    public void testStatus2(){
+        char [][] board ={
+            {'X','X','O'},
+            {'O','O','X'},
+            {'X','O','X'}
+        };
+
+        Board b = new Board(board);
+        Player cpu1 = new Player("cpu1");
+
+        cpu1.setSymbol('X');
+
+        char s=b.status(cpu1);
+        assertTrue(s='d');
+
+
+    }
+
+    @Test (timeout = 3000)
+    public void testStatus3(){
+        char [][] board ={
+            {' ','X','O'},
+            {'O','O','X'},
+            {'X','O','X'}
+        };
+
+        Board b = new Board(board);
+        Player cpu1 = new Player("cpu1");
+
+        cpu1.setSymbol('X');
+
+        char s=b.status(cpu1);
+        assertTrue(s='i');
     }
 
     @Test (timeout = 3000)
