@@ -4,90 +4,58 @@ import java.util.Scanner;
 
 public class Main {
 
+
     public static void main(String[] args) {
-        System.out.println(Integer.MIN_VALUE == -Integer.MAX_VALUE);
         Scanner sc = new Scanner(System.in);
-        System.out.println("Welcome to Tic-Tac-Toe. Choose the game mode:\n1.Player vs CPU\n2.CPU vs CPU");
-        
-        int gm = sc.nextInt();
-        if(gm == 2) {
-            Player cpu1 = new Player("cpu1");
-            Player cpu2 = new Player("cpu2");
+        Agent p1 = new Player("Player",'X');
+        Agent cpu1 = new MCTS('O');     
 
-            cpu1.setSymbol('X');
-            cpu2.setSymbol('O');
-            
-            cpu1.setOpponent(cpu2);
-            cpu2.setOpponent(cpu1);
+        p1.setOpponent(cpu1);
+        cpu1.setOpponent(p1);
 
-            Board b = new Board();
-            MCTS mcts = new MCTS();
-
-            System.out.println(b.toString());
-            Player p = cpu2;
-            System.out.println(b.terminal(p));
-            while( !b.terminal(p) ) {
-                b = (Board) mcts.MCTsSearch(new State(b,p,null)).layout();
-                p = p.opponent();
-                System.out.println(b.toString());
-                System.out.println(b.terminal(p));
-            }
-            char status = b.status(cpu1);
-            if(status == 'v')
-                System.out.println(cpu1.getPlayer() + " has won the game!");
-            else if(status == 'l')
-                System.out.println(cpu1.opponent().getPlayer() + " has won the game!");
-            else if(status == 'f')
-                System.out.println("Draw!");
-        }else if(gm == 1) {
-            Player p1 = new Player("Player 1");
-            Player cpu = new Player("CPU");
-            p1.setSymbol('X');
-            cpu.setSymbol('O');
-            p1.setOpponent(cpu);
-            cpu.setOpponent(p1);
-            MCTS mcts = new MCTS();
-            Board b = new Board();
-            System.out.println(b.toString());
-            while(!b.terminal(p1)){
-                boolean correct = false;
-                while(!correct){
+        Board b;
+        Agent agent = p1;
+        int itr = 0;
+        int player1 =0,player2 =0,draw =0;
+        while(itr < 10){
+            if(((int)itr%Math.sqrt(100)) == 0)
+                System.out.println(itr);
+            agent = p1;
+            b = new Board(agent);
+            while(!b.terminal()){
+                //System.out.println("agent move:");
+                boolean doneMoving = false;
+                while(!doneMoving){
                     try {
-                        b = b.move(p1, sc.nextInt());
-                        correct = true;
-                    } catch(Exception e){
-                        System.out.println(e.getMessage());
+                        b = agent.move(b);
+                        doneMoving = true;
+                    } catch (Exception e){
+                        System.out.println(e.toString());
                     }
                 }
                 System.out.println(b);
-                char status = b.status(p1);
-                if(status != 'i'){
-                    winMessage(b, p1);
-                    break;
-                }
-
-                b = (Board) mcts.MCTsSearch(new State(b,p1,null)).layout();
-                System.out.println(b);
-                status = b.status(p1);
-                if(status != 'i'){
-                    winMessage(b, p1);
-                    break;
-                }
-
+                agent = agent.opponent();
+                //System.out.println("agent switch");
             }
-
+            if(b.status() == p1.getSymbol())
+                player1++;
+            else if(b.status() == cpu1.getSymbol())
+                player2++;
+            else if(b.status() == 'f')
+                draw++;
+            itr++;
+            //System.out.println("\'"+b.status()+"\'");
         }
+        System.out.println("---------");
+
+        System.out.println("Player1: "+player1);
+        System.out.println("Player2: "+player2);
+        System.out.println("Draw: "+draw);
         sc.close();
 
+        // b.resultMessage();
+        sc.close();
     }
-    private static void winMessage(Board b, Player p) {
-        char status = b.status(p);
-        if(status == 'v')
-            System.out.println(p.getPlayer() + " has won the game!");
-        else if(status == 'l')
-            System.out.println(p.opponent().getPlayer() + " has won the game!");
-        else if(status == 'f')
-            System.out.println("Draw!");
-    }
+
 }
 

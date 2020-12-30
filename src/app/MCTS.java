@@ -1,129 +1,125 @@
 package app;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
+/**
+ * MCTS
+ */
+public class MCTS implements Agent{
+    private String agentName;
+    private char symbol;
+    private Agent opponent;
 
-public class MCTS {
+    public MCTS(char symbol){
+        this.agentName = "CPU";
+        this.symbol = symbol;
 
-    protected Queue<State> abertos;
-    private Ilayout objective;
-    private State path;
-
-    /**
-     *  @param n initial state
-     * @return a list of  States from all possibles states from  n
-     */
-	private final List<State> sucs(State s, Player p) {
-		List<State> sucs = new ArrayList<>();
-		List<Ilayout> children = s.layout().children(p);
-		for (Ilayout e : children) {
-			if (s.parent() == null || !e.equals(s.parent().layout())) {
-                State nn = new State(e,p.opponent(),s);
-				sucs.add(nn);
-			}
-        }
-        s.setChildArray(sucs);
-		return sucs;
     }
 
-
-    // Comparator<State> cmpState = new Comparator<State>(){
-    //     Player initial;
-    //     @Override
-    //     public int compare(State o1, State o2) {
-    //        return (int) Math.signum(treePolicy(o2)-treePolicy(o1));
-    //     }
-        
-    // };
-
-    /**
-     * @param start Board with initial configuration
-     * @param goal  Board that we want to achieve
-     * @param h     heuristic used to solve the problem
-     * @return
-     * @return Returns g cost to achieve goal from start
-     */
-    public final State MCTsSearch(State v0) {
-        State root = v0;
-        int iterations =0;
-        Player p = root.player();
-        while(iterations < 1000){
-            State selected = MCTSSelection(root);
-            MCTSExpansion(selected,p);
-            for(State selectedToSim : selected.childArray()) {
-                char result = MCTsSim(selectedToSim, p);
-                MCTsBackPropagation(selectedToSim, p, result);
+    public Board move(Board b){
+        State root = new State(b, null);
+        if(!root.getLayout().getAgent().equals(this)){
+            return null;
+        }
+        for(int iteration = 0; iteration < 1000;iteration++){
+            //System.out.println(iteration);
+            /* Phase 1 - Selection */
+            State selected = mctsStateSelection(root);
+            /* Phase 2 - Expansion */
+            if(!selected.getLayout().terminal())
+                mctsStateExpansion(selected);
+            /* Phase 3 - Simulation */
+            for(State s : selected.getChildArray()){
+                char result = mctsStateSimulate(s);
+                /* Phase 4 - BackPropagation */
+                //System.out.println(result);
+                mctsBackPropagation(s, result);
             }
-           iterations++; 
         }
-        return MCTsBestChildSelectionMax(root);
-    }
-
-    private State MCTSSelection(State root){
-        State selectionCandidate = root;
-        Player initial = root.player();
-        while(!selectionCandidate.childArray().isEmpty()){
-            if(selectionCandidate.player().equals(initial))
-                selectionCandidate = MCTsBestChildSelectionMax(selectionCandidate);
-            else selectionCandidate = MCTsBestChildSelectionMin(selectionCandidate);
-        }
-        return selectionCandidate;
-    }
-
-    public int MCTSExpansion(State selected, Player p){
-        Board b = (Board)selected.layout();
-        if(!b.terminal(p)) {
-            List<State> children = sucs(selected,selected.player().opponent());
-            selected.setChildArray(children);
-        }
-        return selected.childArray().size();
-    }
-
-    private char MCTsSim(State selected, Player p) {
-        Player initial = p;
-        Board b = ((Board) selected.layout());
-        char status = b.status(initial);
-        while(status == 'i'){
-            p=p.opponent();
-            b = b.randMove(p);
-            status = b.status(initial);
-        }
-        return status;
-    }   
-
-    private void MCTsBackPropagation(State vl, Player p, char result) {
-        State previousState = vl;
-        while(previousState != null){
-            previousState.visit();
-            //System.out.println(result);
-            if(result == 'v'){
-                previousState.addWinScore(1.0);
-            }
-                
-            previousState = previousState.parent();
-        }       
-    }
-    private State MCTsBestChildSelectionMax(State root) {
-        State bestChild=root.childArray().get(0);
-        for (State child : root.childArray())
-            if(child.treePolicy()>bestChild.treePolicy())
-                bestChild = child;
-        return bestChild;
-    }
-    private State MCTsBestChildSelectionMin(State root) {
-        State bestChild=root.childArray().get(0);
-        for (State child : root.childArray())
-            if(child.treePolicy()<bestChild.treePolicy())
-                bestChild = child;
-        return bestChild;
+        //System.out.println(root.getVisitCount() + " " + root.getWinScore());
+        //System.out.println(root.getChildArray());
+        return (Board) State.bestChildScore(root).getLayout();
     }
     
+    private State mctsStateSelection(State root){
+        // TODO: Method is probably wrong taking into cosideration that ROOT stores the player that has the next Move and not the player that has moved
+        State selected = root;
+        while(!selected.getChildArray().isEmpty())
+            //if(selected.getLayout().getAgent().equals(this))
+                selected = State.bestChildUCB(selected);
+            //else if(selected.getLayout().getAgent().equals(opponent))
+                //selected = State.bestEnemyChildUCB(selected);
+        return selected;
+    }
 
+    private void mctsStateExpansion(State selected) {
+        if(!selected.getLayout().terminal())
+            selected.makeChildren();
+        //System.out.println(selected.getChildArray());
+    }
 
+    private char mctsStateSimulate(State selected){
+        Board temp = new Board((Board)selected.getLayout());
+        if(temp.status() == opponent.getSymbol()){
+            //System.out.println("here");
+            selected.setWinCount(Integer.MIN_VALUE);
+            return temp.status();
+        }
+        while(!temp.terminal())
+            temp = temp.randomMove();
+            
+        return temp.status();
+    }
 
-} 
+    private void mctsBackPropagation(State selected, char result){
+        State temp = selected;
+        while(temp != null){
+            temp.visit();
+            // if(result == 'f'){
+            //     //System.out.println(temp.agentThatMoved().getName());
+            //     if(temp.agentThatMoved().equals(this))
+            //         temp.addWinScore(0.5);
+            //     else temp.addWinScore(-0.5);
+            // }
+            // if(result == getSymbol()){
+            //     //System.out.println(temp.agentThatMoved().getName());
+            //     if(temp.agentThatMoved().equals(this))
+            //         temp.addWinScore(1);
+            //     else temp.addWinScore(-1);
+            // }
+            if(temp.agentThatMoved().getSymbol() == result)
+                temp.addWinScore(1.0);
+            if(result == 'f')
+                temp.addWinScore(1);
+            temp = temp.getParent();
+        }
+    }
+
+    @Override
+    public void setOpponent(Agent a) {this.opponent = a;}
+
+    @Override
+    public Agent opponent() {return opponent;}
+
+    @Override
+    public char getSymbol() {return symbol;}
+
+    @Override
+    public void setSymbol(char symbol) {this.symbol = symbol;}
+
+    @Override
+    public void setName(String name) {this.agentName = name;}
+
+    @Override
+    public String getName() {return agentName;}
+    @Override
+    public int hashCode() {
+        return getSymbol();
+    }
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof MCTS){
+            MCTS mcts = (MCTS) o;
+            return getName() == mcts.getName() && getSymbol() == mcts.getSymbol();
+        }
+        return false;
+    }
+}

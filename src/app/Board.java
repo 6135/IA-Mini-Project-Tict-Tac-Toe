@@ -1,24 +1,27 @@
 package app;
 
-import java.lang.invoke.StringConcatException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Stack;
 
 public class Board implements Ilayout, Cloneable {
 
 	private int dim = 3;
 	private char board [][];
+	/**
+	 * Player that has the next move, not the one that already moved
+	 */
+	private Agent player;
 	private Random rand = new Random();
 	/**
 	 * This function creates a new Board(initial configuration or goal) based on a input string
 	 * @param str configuration of the board 
 	 */
-	public Board(){
+	public Board(Agent p){
 		this.board = new char[dim][dim];
+		this.player = p;
 
 	}
 
@@ -27,18 +30,7 @@ public class Board implements Ilayout, Cloneable {
 		for(int i = 0; i < dim; i++)
 			System.arraycopy(b[i], 0,this.board[i],0,dim);
 	}
-	/**
-	 * This function creates a new Board(child) with a List of Stacks generated in the function children
-	 * @param sts List of Stacks of the board
-	 */
-	public Board(String str, Player p){
-		board= new char[dim][dim];
-		int si=0;
-		int pos=Character.getNumericValue(str.charAt(0));
-		int r = (int) (pos/dim);
-		int c = (pos%dim);
-		board[r][c]=p.getSymbol();
-	}
+
 
 	/**
 	 * This function creates a new Board with the same List of Stacks and dim as the source
@@ -46,6 +38,7 @@ public class Board implements Ilayout, Cloneable {
 	 */
 	public Board(Board source){
 		this.board = new char[dim][dim];
+		this.player = source.player;
 		for(int i = 0; i < dim; i++)
 			System.arraycopy(source.board[i], 0,this.board[i],0,dim);
 		this.dim = source.getDim();
@@ -57,7 +50,6 @@ public class Board implements Ilayout, Cloneable {
 	@Override
 	public Object clone(){
 		return new Board(this);
-		
 	}
 
 	/**
@@ -80,68 +72,73 @@ public class Board implements Ilayout, Cloneable {
      */
 	@Override
 	public boolean equals(Object l) {
-		return false;
-		
-	}
-    /**
-     * @return true if the receiver equals the argument 'I'; return false otherwise
-     */	
-	public boolean isGoal(Ilayout l) {
-		return equals(l);
-	}
+		Board b;
 
-	@Override
-	public double getG() {
-		return 1.0;					
+		if(l instanceof Board)
+			b = (Board) l;
+		else return false;
+
+		for(int i = 0; i<dim;i++)
+			for(int j = 0; j < dim; j++)
+				if(board[i][j] != b.board[i][j])
+					return false;
+		return true;
 	}
 
 	/**
 	 * @return List of all possible movements, excluding one that equals the initial layout, and any repeated 
 	 */
     @Override
-    public List<Ilayout> children(Player p) {
-        HashMap<Ilayout, Integer> children = new HashMap<>();
+    public List<Ilayout> children() {
+        List<Ilayout> children = new ArrayList<>();
 		Board b;
-		int index = 0;
 		for(int i=0;i<dim;i++){
 			for(int j=0;j<dim;j++){
 				if(board[i][j]=='\0'){
 					b = (Board) this.clone();
-					b.board[i][j]=p.getSymbol();
-					children.put(b,index++);
+					b.player = player.opponent();
+					b.board[i][j]=player.getSymbol();
+					children.add(b);
 				}
 			}
 		}
-        return new ArrayList<>(children.keySet());
+		Collections.shuffle(children);
+        return children;
 	}
 	
-	public boolean terminal(Player p){
-		char status = status(p);
-		return status != 'i';
+	public boolean terminal(){
+		return anyVictory() || full(); 
 	}
 	
-    public char status(Player p){
-		return victory(p) ? 'v' : victory(p.opponent()) ? 'l' : full() ? 'd' : 'i';
-    }
+    public char status(){
+		return victory() ? player.getSymbol() : loss() ? (char) player.opponent().getSymbol() : full() ? 'f' : 'i';
+	}
+	
+	private boolean anyVictory(){
+        for (int i = 0; i < 3; i++)
+            if((checkRow(i)) || (checkCol(i)))
+                return true;
+        return (checkLRD() || checkRLD());			
+	}
+
+	public boolean loss(){
+		Agent opponent = player.opponent();
+        for (int i = 0; i < 3; i++)
+            if((checkRow(i) && board[i][0] == opponent.getSymbol()) || (checkCol(i) && board[0][i] == opponent.getSymbol()))
+                return true;
+        return (checkLRD() || checkRLD()) && board[dim/2][dim/2]==opponent.getSymbol();		
+	}
 
     public boolean victory(){
         for (int i = 0; i < 3; i++)
-            if(checkRow(i) || checkCol(i))
+            if((checkRow(i) && board[i][0] == player.getSymbol()) || (checkCol(i) && board[0][i] == player.getSymbol()))
                 return true;
-        return checkLRD() || checkRLD();
-    }
-
-    public boolean victory(Player p){
-        for (int i = 0; i < 3; i++)
-            if((checkRow(i) && board[i][0] == p.getSymbol()) || (checkCol(i) && board[0][i] == p.getSymbol()))
-                return true;
-        return (checkLRD() || checkRLD()) && board[(int)dim/2][(int)dim/2]==p.getSymbol();
+        return (checkLRD() || checkRLD()) && board[dim/2][dim/2]==player.getSymbol();
     }
 
     private boolean checkRow(int row){
         if(board[row][0]=='\0')
             return false;
-        // else return board[row][0]==board[row][1] && board[row][1]==board[row][2];
         for (int i = 1; i < board[row].length; i++) 
             if(board[row][i-1] != board[row][i])
                 return false;
@@ -151,7 +148,6 @@ public class Board implements Ilayout, Cloneable {
     private boolean checkCol(int col){
         if(board[0][col]=='\0')
             return false;
-        // else return board[0][col]==board[1][col] && board[1][col]==board[2][col];
         for (int i = 1; i < board.length; i++)
             if(board[i-1][col] != board[i][col])
                 return false;
@@ -161,7 +157,6 @@ public class Board implements Ilayout, Cloneable {
     private boolean checkLRD(){
         if(board[0][0]=='\0')
             return false;
-        // else return board[0][0] == board[1][1] && board[1][1] == board[2][2];
         for (int i = 1; i < board.length; i++) 
             if(board[i-1][i-1] != board[i][i])
                 return false;
@@ -172,7 +167,6 @@ public class Board implements Ilayout, Cloneable {
         
         if(board[0][2]=='\0')
             return false;
-        // else return board[0][2] == board[1][1] && board[1][1] == board[2][0];
         for (int i = 1; i < board.length; i++) 
             if(board[i-1][board.length-i] != board[i][board.length-(i+1)])
                 return false;
@@ -201,34 +195,83 @@ public class Board implements Ilayout, Cloneable {
 			for(int j = 0; j < dim; j++){
 				char c = board[i][j];
 				if(c =='\0')
-					s.append("-");
+					s.append("- ");
 				else
-					s.append(c);
+					s.append(c+" ");
 			}
 			s.append('\n');
 		}
 		return s.toString();
 	}
-	public Board move(Player p, int pos) throws IndexOutOfBoundsException,IllegalStateException{
+	
+	public String flatToString(){
+		StringBuilder s = new StringBuilder();
+		for(int i = 0; i < dim; i++){
+			for(int j = 0; j < dim; j++){
+				char c = board[i][j];
+				if(c =='\0')
+					s.append("-");
+				else
+					s.append(c);
+			}
+			s.append(" ");
+		}
+		return s.toString();
+	}
+
+	public Board move(int pos) throws IndexOutOfBoundsException,IllegalStateException{
+		//System.out.println("Active agent before move" + player.getName());
 		if(pos > 8 || pos < 0)
 			throw new IndexOutOfBoundsException("Position must be a value between 0 and 8");
 		Board copy = new Board(this);
-		int r = (int) (pos/dim);
+		int r = (pos/dim);
 		int c = (pos%dim);
 		if(copy.board[r][c] != '\0')
 			throw new IllegalStateException("This spot is already filled in, try a new move");
-		else copy.board[r][c] = p.getSymbol();
+		else copy.board[r][c] = player.getSymbol();
+		copy.player=player.opponent();
+		//System.out.println("Active agent after move: " + copy.player.getName());
 		return copy;	
 	}
-	public Board randMove(Player p){
+
+	public Board randomMove(){
 		Board copy = new Board(this);
 		int i = rand.nextInt(dim*dim);
-		int r = (int) (i/dim);
+		int r = (i/dim);
 		int c = (i%dim);
 		if(copy.board[r][c] == '\0'){
-			copy.board[r][c] = p.getSymbol();
+			copy.board[r][c] = player.getSymbol();
+			copy.player = player.opponent();
 			return copy;
 		}
-		else return copy.randMove(p);
+		else return randomMove();
 	}
+
+	@Override
+	public boolean isGoal(Ilayout i) {
+		return false;
+	}
+
+	@Override
+	public double getG() {
+		return 0;
+	}
+
+	@Override
+	public void resultMessage() {
+		char status = status();
+		System.out.println(status);
+		if(status == player.getSymbol())
+			System.out.println(player.getName() + " has won the game");
+		else if(status == 'f')
+			System.out.println("Game draw!");
+		else if(status == player.opponent().getSymbol())
+			System.out.println(player.opponent().getName() + " has won the game");
+		else System.out.println("Unknown message.");
+
+	}
+	@Override
+	public void setAgent(Agent agent){this.player = agent;}
+	@Override
+	public Agent getAgent(){return player;}
 }

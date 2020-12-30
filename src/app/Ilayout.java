@@ -9,7 +9,7 @@ public interface Ilayout {
     /**
      * @return the children of the reciever
      */
-    List<Ilayout> children(Player player);
+    List<Ilayout> children();
     /**
      * @return true if the receiver equals the argument 'I'; return false otherwise
      */
@@ -22,7 +22,13 @@ public interface Ilayout {
      * @return the board of the Ilayout
      */
     String toString();
-
+    public Board move(int pos) throws IndexOutOfBoundsException,IllegalStateException;
+    public Board randomMove();
+    public char status();
+    public void resultMessage();
+    public void setAgent(Agent agent);
+    public Agent getAgent();
+    public boolean terminal();
     int getDim();
 }
 

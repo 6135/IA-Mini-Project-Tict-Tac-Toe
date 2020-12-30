@@ -1,84 +1,102 @@
 package app;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.experimental.max.MaxCore;
-
-public class State implements Comparable<State>{
-    private static final Random rand = new Random();
-    public static final int MAXVAL = Integer.MAX_VALUE;
-    public static final int MINVAL = Integer.MIN_VALUE+1;
-    private Ilayout layout;
+/**
+ * State
+ */
+public class State implements Comparable<State> {
     private State parent;
-
-    private Player player;
-
-    private int visitCount;
-    private int winScore;
+    private Ilayout layout;
     private List<State> childArray;
-
-    public State(Ilayout s0, Player player,State parent){
-        this.layout = s0;
-        this.player = player;
-        this.visitCount = 1;
-        this.winScore = 0;
-        this.parent=parent;
-        childArray = new ArrayList<>();
-    }
-
-    public State(State src){
-        this.layout = new Board((Board) src.layout);
-        this.player = src.player;
-        this.visitCount = src.visitCount;
-        this.winScore = src.winScore;
-        this.parent=src.parent;
-        this.childArray=src.childArray;
-    }
-
-    public Ilayout layout() { return layout; }
-    public Player player() { return player; }
-    public int visitCount() { return visitCount; }
-    public double winScore() { return winScore; }
-    public State parent(){return this.parent;}
-    public List<State> childArray() { return childArray; }
-    public double treePolicy(){return CalcUCB();}
-    public State getRandomChildState(){return childArray().get(rand.nextInt(childArray.size()));}
-
-    public void setLayout(Ilayout layout) { this.layout = new Board((Board) layout); }
-    public void setPlayer(Player player) { this.player = player; }
-    public void setVisitCount(int visitCount) { this.visitCount = visitCount; }
-    public void setParent(State parent){this.parent=parent;}
-    public void setChildArray(List<State> childArray){this.childArray=childArray;}
+    private double winScore;
+    private int visitCount;
+    private Random rand = new Random();
     
-    public void addWinScore(double winScore) { this.winScore += winScore; }
-    public void addVisits(double visitCount) { this.visitCount += visitCount; }
-    public void visit(){this.visitCount++;}
-
-    public List<State> children(Player opponent){
+    public State(Ilayout layout, State parent) {
+        this.layout = layout;
+        this.parent = parent;
         childArray = new ArrayList<>();
-        for(Ilayout l : layout.children(opponent)){
-            State s = new State(l,opponent,this);
-            childArray.add(s);
-        }
-        return childArray;
     }
 
-    public double CalcUCB(){
-        double firstExper = winScore()/visitCount();
-        double secondExper = Math.sqrt((2*(Math.log(parent().visitCount()))/visitCount()));
-        double expr = firstExper + secondExper;
-        return expr;
+
+    public void setParent(State parent){this.parent = parent;}
+    public void setBoard(Ilayout layout){this.layout = layout;}
+    public void setChildArray(List<State> childArray){this.childArray = childArray;}
+    public void setWinCount(int winScore){this.winScore = winScore;}
+    public void setVisitCount(int visitCount){this.visitCount = visitCount;}
+
+    public State getParent(){return parent;}
+    public Ilayout getLayout(){return layout;}
+    public List<State> getChildArray(){return childArray;}
+    public double getWinScore(){return winScore;}
+    public int getVisitCount(){return visitCount;}
+
+
+    public List<State> makeChildren(){
+        if(childArray.isEmpty()){
+            List<State> children = new ArrayList<>();
+            for(Ilayout l : layout.children()){
+                children.add(new State(l,this));
+            }
+            setChildArray(children);
+            return children;
+        } else return getChildArray();
+
+    }
+    public void visit(){this.visitCount++;}
+    public void addWinScore(double add){this.winScore+=add;}
+
+    public double ucbCalc(){
+        if(visitCount == 0)
+            return Double.MAX_VALUE;
+        int parentVisits = parent.getVisitCount();
+        double expr1 = this.winScore / this.visitCount; 
+        double expr2 = Math.sqrt(2) * (Math.sqrt((Math.log(parentVisits) / this.visitCount)));
+        return expr1+expr2;
     }
 
     @Override
     public int compareTo(State o) {
-        return (int) Math.signum(treePolicy()-o.treePolicy());
+        return (int) Math.signum(ucbCalc() - o.ucbCalc());
     }
 
+    public static State bestChildUCB(State root){
+        return Collections.max(root.getChildArray());
+    }
+    public static State bestEnemyChildUCB(State root){
+        return Collections.min(root.getChildArray());
+    }
+    
+    private static Comparator<State> cmpMaxScore = new Comparator<>() {
+        public int compare(State o1, State o2) {
+            return (int) Math.signum(o1.visitCount - o2.visitCount);
+        }
+    };
+
+    public static State bestChildScore(State root) {
+        return Collections.max(root.getChildArray(), cmpMaxScore);
+    }
+    
     @Override
     public String toString() {
-        return layout.toString() + '\n' + this.treePolicy();
+        return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
+    }
+
+    public State getRandomChild(){
+        int nextRandom = rand.nextInt(childArray.size());
+        return childArray.get(nextRandom);
+    }
+
+    public Agent agentHasNextMove(){
+        return ((Board) layout).getAgent();
+    }
+
+    public Agent agentThatMoved(){
+        return agentHasNextMove().opponent();
     }
 }
