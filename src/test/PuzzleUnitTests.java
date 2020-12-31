@@ -18,6 +18,7 @@ public class PuzzleUnitTests {
     public void testConstructor() {
         //todo
     }
+
     @Test (timeout = 1000)
     public void testConstructor2() {
         //todo
@@ -164,11 +165,53 @@ public class PuzzleUnitTests {
         Agent cpu1 = new MCTS('X');
         Board b = new Board(board,cpu1);
         
-;
+
 
         char s=b.status();
         
         assertTrue(s=='i');
+    }
+
+    @Test 
+    public void testSolve1(){
+        int moves = 1000;
+        char [][] board ={
+            {'\0','\0','\0'},
+            {'\0','X','\0'},
+            {'\0','\0','\0'}
+        };
+
+        char [][] botBoard1 ={{'O','\0','\0'},{'\0','X','\0'},{'\0','\0','\0'}};
+        char [][] botBoard12 ={{'\0','\0','O'},{'\0','X','\0'},{'\0','\0','\0'}};
+        char [][] botBoard13 ={{'\0','\0','\0'},{'\0','X','\0'},{'O','\0','\0'}};
+        char [][] botBoard14 ={{'\0','\0','\0'},{'\0','X','\0'},{'\0','\0','O'}};
+        
+
+        int itr = 0;
+
+        Agent bot = new MCTS('O');
+        Agent p = new Player("Test", 'X');
+
+        p.setOpponent(bot);
+        bot.setOpponent(p);
+
+        Board b = new Board(board,bot);
+        
+        int rMoves=0;
+        
+
+        while (itr<moves) {
+            Board botPlay = bot.move(b);
+            if(botPlay.equals(new Board(botBoard1,p)) || botPlay.equals(new Board(botBoard12,p)) || botPlay.equals(new Board(botBoard13,p)) || botPlay.equals(new Board(botBoard14,p))) rMoves++;
+            
+
+            itr++; 
+        }
+        double d = (rMoves/moves);
+        char [][] b2 = {{'O','\0','X'},{'\0','X','\0'},{'\0','\0','\0'}};
+
+        System.out.println(d);
+        assertTrue(d>=0.9);
     }
 
     @Test (timeout = 3000)
