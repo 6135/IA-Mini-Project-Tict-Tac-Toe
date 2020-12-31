@@ -34,50 +34,47 @@ public class PuzzleUnitTests {
         Agent cpu1 = new MCTS('X');
         Agent cpu2 = new MCTS('O');
         cpu2.setOpponent(cpu1);
-        Board b = new Board(board);
-        
-        
-
-        cpu2.setSymbol('O');
+        Board b = new Board(board,cpu2);
         
         List<Ilayout> children = new ArrayList<>();
-        children.addAll(b.children(cpu2));
+        children.addAll(b.children());
         char [][] c1 ={
-            {'O','X',' '},
-            {' ','O',' '},
-            {' ',' ','X'}
+            {'O','X','\0'},
+            {'\0','O','\0'},
+            {'\0','\0','X'}
         };
         char [][] c2 ={
-            {' ','X','O'},
-            {' ','O',' '},
-            {' ',' ','X'}
+            {'\0','X','O'},
+            {'\0','O','\0'},
+            {'\0','\0','X'}
         };
         char [][] c3 ={
-            {' ','X',' '},
-            {'O','O',' '},
-            {' ',' ','X'}
+            {'\0','X','\0'},
+            {'O','O','\0'},
+            {'\0','\0','X'}
         };
         char [][] c4 ={
-            {' ','X',' '},
-            {' ','O','O'},
-            {' ',' ','X'}
+            {'\0','X','\0'},
+            {'\0','O','O'},
+            {'\0','\0','X'}
         };
         char [][] c5 ={
-            {' ','X',' '},
-            {' ','O',' '},
-            {'O',' ','X'}
+            {'\0','X','\0'},
+            {'\0','O','\0'},
+            {'O','\0','X'}
         };
         char [][] c6 ={
-            {' ','X',' '},
-            {' ','O',' '},
-            {' ','O','X'}
+            {'\0','X','\0'},
+            {'\0','O','\0'},
+            {'\0','O','X'}
         };
-        assertTrue(children.contains(new Board(c1)));
-        assertTrue(children.contains(new Board(c2)));
-        assertTrue(children.contains(new Board(c3)));
-        assertTrue(children.contains(new Board(c4)));
-        assertTrue(children.contains(new Board(c5)));
-        assertTrue(children.contains(new Board(c6)));
+
+        assertTrue(children.contains(new Board(c1,cpu1)));
+        assertTrue(children.contains(new Board(c2,cpu1)));
+        assertTrue(children.contains(new Board(c3,cpu1)));
+        assertTrue(children.contains(new Board(c4,cpu1)));
+        assertTrue(children.contains(new Board(c5,cpu1)));
+        assertTrue(children.contains(new Board(c6,cpu1)));
         
     }
 
