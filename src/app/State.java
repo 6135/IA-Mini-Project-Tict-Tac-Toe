@@ -55,7 +55,7 @@ public class State{
         if(visitCount == 0)
             return Double.MAX_VALUE;
         int parentVisits = parent.getVisitCount();
-        return (this.winScore / this.visitCount) + ( 1.41 * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
+        return (this.winScore / this.visitCount) + ( Math.sqrt(2) * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
     }
 
 

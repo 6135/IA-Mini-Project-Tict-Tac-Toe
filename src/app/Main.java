@@ -17,7 +17,7 @@ public class Main {
         Agent agent = p1;
         int itr = 0;
         int player1 = 0,player2 = 0,draw = 0;
-        while(itr < 100){
+        while(itr < 1000){
             if(((int)itr%5) == 0)
                 System.out.println(itr);
             b = new Board(agent);

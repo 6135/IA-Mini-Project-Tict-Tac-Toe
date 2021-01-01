@@ -52,23 +52,35 @@ public class MCTS implements Agent{
         //System.out.println(selected.getChildArray());
     }
 
+
+
+    private void mctsBackPropagation(State selected, char result){
+        State temp = selected;
+        while (temp != null) {
+            temp.visit();
+            if (temp.agentThatMoved().getSymbol() == result )
+                temp.addWinScore(1.0);
+            else if (result == 'f')
+                temp.addWinScore(0.5);
+            temp = temp.getParent();
+        }
+    }
+
     private char mctsStateSimulate(State selected){
         Ilayout temp = (Ilayout) selected.getLayout().clone();
+        char status = temp.status();
+        if(status == opponent.getSymbol()) {
+            /**
+             * If a child is terminal, and results in a loss, this means that if the parent board is chosen, the game will result in a loss if optimal plays are made
+             * So if a child is terminal and lost, we need to tell the algorithm that choosing that board, or even exploring it would be costly and uncesseray as it would lead to game loss
+             **/ //
+            selected.getParent().setWinCount(Integer.MIN_VALUE);//If the parent board were to be thi
+            return temp.status();
+        }
         while(!temp.terminal())
             temp = temp.randomMove();
             
         return temp.status();
-    }
-
-    private void mctsBackPropagation(State selected, char result){
-        while(selected != null){
-            selected.visit();
-            if(result == 'f')
-                selected.addWinScore(0.5);
-            else if (result == selected.agentThatMoved().getSymbol())
-                selected.addWinScore(1.0);
-            selected = selected.getParent();
-        }
     }
 
     @Override

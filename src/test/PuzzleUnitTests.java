@@ -125,11 +125,12 @@ public class PuzzleUnitTests {
             {'X','X','X'}
         };
         Agent cpu1 = new MCTS('X');
+        Agent cpu2 = new MCTS('O');
+
+        cpu1.setOpponent(cpu2);
+        cpu2.setOpponent(cpu1);
+
         Board b = new Board(board,cpu1);
-        
-
-        cpu1.setSymbol('X');
-
         char s=b.status();
         
         assertTrue(s=='X');
