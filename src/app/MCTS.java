@@ -40,13 +40,9 @@ public class MCTS implements Agent{
     }
     
     private State mctsStateSelection(State root){
-        // TODO: Method is probably wrong taking into cosideration that ROOT stores the player that has the next Move and not the player that has moved
         State selected = root;
         while(!selected.getChildArray().isEmpty())
-            //if(selected.getLayout().getAgent().equals(this))
-                selected = State.bestChildUCB(selected);
-            //else if(selected.getLayout().getAgent().equals(opponent))
-                //selected = State.bestEnemyChildUCB(selected);
+            selected = State.bestChildUCB(selected);
         return selected;
     }
 
@@ -58,11 +54,6 @@ public class MCTS implements Agent{
 
     private char mctsStateSimulate(State selected){
         Board temp = new Board((Board)selected.getLayout());
-        if(temp.status() == opponent.getSymbol()){
-            //System.out.println("here");
-            selected.setWinCount(Integer.MIN_VALUE);
-            return temp.status();
-        }
         while(!temp.terminal())
             temp = temp.randomMove();
             
@@ -70,26 +61,14 @@ public class MCTS implements Agent{
     }
 
     private void mctsBackPropagation(State selected, char result){
-        State temp = selected;
-        while(temp != null){
-            temp.visit();
-            // if(result == 'f'){
-            //     //System.out.println(temp.agentThatMoved().getName());
-            //     if(temp.agentThatMoved().equals(this))
-            //         temp.addWinScore(0.5);
-            //     else temp.addWinScore(-0.5);
-            // }
-            // if(result == getSymbol()){
-            //     //System.out.println(temp.agentThatMoved().getName());
-            //     if(temp.agentThatMoved().equals(this))
-            //         temp.addWinScore(1);
-            //     else temp.addWinScore(-1);
-            // }
-            if(temp.agentThatMoved().getSymbol() == result)
-                temp.addWinScore(1.0);
+        while(selected != null){
+            selected.visit();
             if(result == 'f')
-                temp.addWinScore(1);
-            temp = temp.getParent();
+                selected.addWinScore(0.5);
+            else if (result == selected.agentThatMoved().getSymbol()){
+                selected.addWinScore(1.0);
+            }
+            selected = selected.getParent();
         }
     }
 

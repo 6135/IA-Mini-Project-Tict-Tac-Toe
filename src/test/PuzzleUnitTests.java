@@ -164,14 +164,18 @@ public class PuzzleUnitTests {
 
         Agent cpu1 = new MCTS('X');
         Board b = new Board(board,cpu1);
+<<<<<<< Updated upstream
         
 
+=======
+>>>>>>> Stashed changes
 
         char s=b.status();
         
         assertTrue(s=='i');
     }
 
+<<<<<<< Updated upstream
     @Test 
     public void testSolve1(){
         int moves = 1000;
@@ -218,33 +222,55 @@ public class PuzzleUnitTests {
     public void testSolve(){
         //todo
     }
+=======
+>>>>>>> Stashed changes
 
-    @Test (timeout = 3000)
-    public void testSolve2(){
-        //todo
-    }
+    @Test (timeout = 1000)
+    public void testVictory(){
+        char [][] board ={
+            {'X','O','\0'},
+            {'O','X','\0'},
+            {'\0','\0','X'}
+        };
+        Agent cpu1 = new MCTS('X');
+        Agent cpu2 = new MCTS('O');
 
-    @Test (timeout = 3000)
-    public void testSolve3(){
-        //todo
-    }
-    @Test (timeout = 3000)
-    public void testSolve4(){
-        //todo
-    }
-    @Test (timeout = 3000)
-    public void testSolve5(){
-        //todo
+        cpu1.setOpponent(cpu2);
+        cpu2.setOpponent(cpu1);
 
-    }
-    @Test (timeout = 3000)
-    public void testSolve6(){
-        //todo
-    }
-    @Test (timeout = 60000)
-    public void testTime(){
-        //todo
-    }
-
+        Board b = new Board(board,cpu2);
+        char status = b.status();
+        assertEquals('X', status);
     
+        char[][] board2 ={
+            {'X','O','X'},
+            {'\0','X','X'},
+            {'O','O','O'}
+        };
+        b = new Board(board2,cpu1);
+        status = b.status();
+        assertEquals('O', status);
+    }
+
+    @Test 
+    public void testBoardEquals(){
+        char[][] board = { {'\0','X','\0'} , {'\0','\0','\0'} , {'\0','O','\0'} };
+        char[][] boardRotated = { {'\0','O','\0'} , {'\0','\0','\0'} , {'\0','X','\0'} };
+        char[][] boardRotated2 = { {'\0','\0','\0'} , {'X','\0','O'} , {'\0','\0','\0'} };
+        char[][] boardRotated3 = { {'\0','\0','\0'} , {'O','\0','X'} , {'\0','\0','\0'} };
+
+        Board board1 = new Board(board, new MCTS('X'));
+        Board board2 = new Board(boardRotated, new MCTS('X'));
+        Board board3 = new Board(boardRotated2, new MCTS('X'));
+        Board board4 = new Board(boardRotated3, new MCTS('X'));
+
+        assertEquals(board1,board2);
+        assertEquals(board1,board3);
+        assertEquals(board1,board4);
+        assertEquals(board2,board3);
+        assertEquals(board2,board4);
+        assertEquals(board3,board4);
+
+        System.out.println("Done");
+    }
 }

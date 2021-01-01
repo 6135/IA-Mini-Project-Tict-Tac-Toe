@@ -55,9 +55,7 @@ public class State implements Comparable<State> {
         if(visitCount == 0)
             return Double.MAX_VALUE;
         int parentVisits = parent.getVisitCount();
-        double expr1 = this.winScore / this.visitCount; 
-        double expr2 = Math.sqrt(2) * (Math.sqrt((Math.log(parentVisits) / this.visitCount)));
-        return expr1+expr2;
+        return (this.winScore / this.visitCount) + ( 0.5 * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
     }
 
     @Override
@@ -68,13 +66,10 @@ public class State implements Comparable<State> {
     public static State bestChildUCB(State root){
         return Collections.max(root.getChildArray());
     }
-    public static State bestEnemyChildUCB(State root){
-        return Collections.min(root.getChildArray());
-    }
     
     private static Comparator<State> cmpMaxScore = new Comparator<>() {
         public int compare(State o1, State o2) {
-            return (int) Math.signum(o1.visitCount - o2.visitCount);
+            return (int) Math.signum(o1.visitCount - (double) o2.visitCount);
         }
     };
 
@@ -87,10 +82,10 @@ public class State implements Comparable<State> {
         return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
     }
 
-    public State getRandomChild(){
-        int nextRandom = rand.nextInt(childArray.size());
-        return childArray.get(nextRandom);
-    }
+    // public State getRandomChild(){
+    //     int nextRandom = rand.nextInt(childArray.size());
+    //     return childArray.get(nextRandom);
+    // }
 
     public Agent agentHasNextMove(){
         return ((Board) layout).getAgent();
