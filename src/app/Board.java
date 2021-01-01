@@ -2,19 +2,17 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class Board implements Ilayout, Cloneable {
 
 	private int dim = 3;
-	private char board [][];
+	private char[][] board;
 	/**
 	 * Player that has the next move, not the one that already moved
 	 */
 	private Agent player;
-	private Agent playerThatMoved;
 	private Random rand = new Random();
 	/**
 	 * This function creates a new Board(initial configuration or goal) based on a input string
@@ -23,9 +21,6 @@ public class Board implements Ilayout, Cloneable {
 	public Board(Agent p){
 		this.board = new char[dim][dim];
 		this.player = p;
-		if(p.opponent() != null)
-			this.playerThatMoved = p.opponent();
-		else throw new NullPointerException("Opponent must not be null!");
 
 	}
 
@@ -135,6 +130,8 @@ public class Board implements Ilayout, Cloneable {
 	}
 	
     public char status(){
+		if(player.opponent() == null)
+			System.out.println("err null");
 		return victory() ? (char) player.opponent().getSymbol() : loss() ? (char) player.getSymbol() : full() ? 'f' : 'i';
 	}
 	

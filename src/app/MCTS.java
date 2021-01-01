@@ -14,12 +14,12 @@ public class MCTS implements Agent{
 
     }
 
-    public Board move(Board b){
+    public Ilayout move(Ilayout b){
         State root = new State(b, null);
         if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < 1000;iteration++){
+        for(int iteration = 0; iteration < 5000;iteration++){
             //System.out.println(iteration);
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
@@ -36,7 +36,7 @@ public class MCTS implements Agent{
         }
         //System.out.println(root.getVisitCount() + " " + root.getWinScore());
         //System.out.println(root.getChildArray());
-        return (Board) State.bestChildScore(root).getLayout();
+        return State.bestChildScore(root).getLayout();
     }
     
     private State mctsStateSelection(State root){
@@ -53,7 +53,7 @@ public class MCTS implements Agent{
     }
 
     private char mctsStateSimulate(State selected){
-        Board temp = new Board((Board)selected.getLayout());
+        Ilayout temp = (Ilayout) selected.getLayout().clone();
         while(!temp.terminal())
             temp = temp.randomMove();
             
@@ -65,9 +65,8 @@ public class MCTS implements Agent{
             selected.visit();
             if(result == 'f')
                 selected.addWinScore(0.5);
-            else if (result == selected.agentThatMoved().getSymbol()){
+            else if (result == selected.agentThatMoved().getSymbol())
                 selected.addWinScore(1.0);
-            }
             selected = selected.getParent();
         }
     }

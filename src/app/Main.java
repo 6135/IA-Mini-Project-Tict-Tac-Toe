@@ -13,12 +13,12 @@ public class Main {
         p1.setOpponent(cpu1);
         cpu1.setOpponent(p1);
 
-        Board b;
+        Ilayout b;
         Agent agent = p1;
         int itr = 0;
-        int player1 =0,player2 =0,draw =0;
+        int player1 = 0,player2 = 0,draw = 0;
         while(itr < 100){
-            if(((int)itr%10) == 0)
+            if(((int)itr%5) == 0)
                 System.out.println(itr);
             b = new Board(agent);
             while(!b.terminal()){
@@ -29,7 +29,7 @@ public class Main {
                         b = agent.move(b);
                         doneMoving = true;
                     } catch (Exception e){
-                        System.out.println(e);
+                        System.out.println(e.getMessage());
                     }
                 }
                 if(!(p1 instanceof MCTS))

@@ -9,7 +9,7 @@ import java.util.Random;
 /**
  * State
  */
-public class State implements Comparable<State> {
+public class State{
     private State parent;
     private Ilayout layout;
     private List<State> childArray;
@@ -55,18 +55,19 @@ public class State implements Comparable<State> {
         if(visitCount == 0)
             return Double.MAX_VALUE;
         int parentVisits = parent.getVisitCount();
-        return (this.winScore / this.visitCount) + ( 0.5 * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
+        return (this.winScore / this.visitCount) + ( 1.41 * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
     }
 
-    @Override
-    public int compareTo(State o) {
-        return (int) Math.signum(ucbCalc() - o.ucbCalc());
-    }
+
+    private static Comparator<State> cmpUCB = new Comparator<>() {
+        public int compare(State o1, State o2) {
+            return (int) Math.signum(o1.ucbCalc() - o2.ucbCalc());
+        }
+    }; 
 
     public static State bestChildUCB(State root){
-        return Collections.max(root.getChildArray());
+        return Collections.max(root.getChildArray(), cmpUCB );
     }
-    
     private static Comparator<State> cmpMaxScore = new Comparator<>() {
         public int compare(State o1, State o2) {
             return (int) Math.signum(o1.visitCount - (double) o2.visitCount);
@@ -81,11 +82,6 @@ public class State implements Comparable<State> {
     public String toString() {
         return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
     }
-
-    // public State getRandomChild(){
-    //     int nextRandom = rand.nextInt(childArray.size());
-    //     return childArray.get(nextRandom);
-    // }
 
     public Agent agentHasNextMove(){
         return ((Board) layout).getAgent();

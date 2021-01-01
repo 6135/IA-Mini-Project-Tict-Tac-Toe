@@ -2,7 +2,7 @@ package app;
 
 public interface Agent {
 
-    Board move(Board b);
+    Ilayout move(Ilayout b);
     void setOpponent(Agent a);
     Agent opponent();
     char getSymbol();

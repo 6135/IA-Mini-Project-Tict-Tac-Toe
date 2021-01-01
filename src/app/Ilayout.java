@@ -5,7 +5,7 @@ package app;
 
 import java.util.List;
 
-public interface Ilayout {
+public interface Ilayout{
     /**
      * @return the children of the reciever
      */
@@ -22,8 +22,9 @@ public interface Ilayout {
      * @return the board of the Ilayout
      */
     String toString();
-    public Board move(int pos) throws IndexOutOfBoundsException,IllegalStateException;
-    public Board randomMove();
+    public Object clone();
+    public Ilayout move(int pos) throws IndexOutOfBoundsException,IllegalStateException;
+    public Ilayout randomMove();
     public char status();
     public void resultMessage();
     public void setAgent(Agent agent);
