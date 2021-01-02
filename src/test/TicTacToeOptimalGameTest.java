@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import app.*;
 public class TicTacToeOptimalGameTest {
-    private static final int iter =  1_000;
+    private static final int iter =  1_00;
     private static final double delta = 0.2;
     @Test (timeout = 100_000)
     public void algorithmTest1(){
@@ -32,6 +32,7 @@ public class TicTacToeOptimalGameTest {
         for(int i = 0; i < iter; i++){
             if(cpu.move(playerBoard).equals(expectedBotBoard))
                 cMoves++;
+            //System.out.println(cpu.move(playerBoard));
         }
         double result = cMoves/(double)(iter);
         System.out.println(result);
@@ -194,6 +195,66 @@ public class TicTacToeOptimalGameTest {
 
         char[][] playerPlay1 = { {'X','O','X'}, {'\0','O','\0'}, {'O','X','X'} };
         char[][] botExpectedPlay = { {'X','O','X'}, {'\0','O','O'}, {'O','X','X'} };
+    
+        int cMoves = 0;
+        Ilayout playerBoard = new Board(playerPlay1,cpu);
+        Ilayout expectedBotBoard = new Board(botExpectedPlay,p1);
+
+        for(int i = 0; i < iter; i++){
+            Ilayout botMove = cpu.move(playerBoard);
+            if(botMove.equals(expectedBotBoard))
+                cMoves++;
+            //System.out.println(botMove);
+        }
+        double result = cMoves/(double)(iter);
+        System.out.println(result);
+        if( result < (1.0-delta) )
+            System.out.println("Failed algorithmTest" + testID);
+        assertEquals(1, result , delta);
+        System.out.println("Passed algorithmTest" + testID);
+    }
+
+    @Test (timeout = 100_000)
+    public void algorithmTest8(){
+        int testID = 8;
+        Agent p1 = new Player("Player",'X');
+        Agent cpu = new MCTS('O');
+
+        p1.setOpponent(cpu);
+        cpu.setOpponent(p1);    
+
+        char[][] playerPlay1 = { {'O','X','\0'}, {'\0','X','\0'}, {'\0','\0','\0'} };
+        char[][] botExpectedPlay = { {'O','X','\0'}, {'\0','X','\0'}, {'\0','O','\0'} };
+    
+        int cMoves = 0;
+        Ilayout playerBoard = new Board(playerPlay1,cpu);
+        Ilayout expectedBotBoard = new Board(botExpectedPlay,p1);
+
+        for(int i = 0; i < iter; i++){
+            Ilayout botMove = cpu.move(playerBoard);
+            if(botMove.equals(expectedBotBoard))
+                cMoves++;
+            //System.out.println(botMove);
+        }
+        double result = cMoves/(double)(iter);
+        System.out.println(result);
+        if( result < (1.0-delta) )
+            System.out.println("Failed algorithmTest" + testID);
+        assertEquals(1, result , delta);
+        System.out.println("Passed algorithmTest" + testID);
+    }
+
+    @Test (timeout = 100_000)
+    public void algorithmTest9(){
+        int testID = 9;
+        Agent p1 = new Player("Player",'X');
+        Agent cpu = new MCTS('O');
+
+        p1.setOpponent(cpu);
+        cpu.setOpponent(p1);    
+
+        char[][] playerPlay1 = { {'\0','X','O'},{'X','O','X'},{'\0','\0','\0'} };
+        char[][] botExpectedPlay = { {'\0','X','O'}, {'X','O','X'}, {'O','\0','\0'} };
     
         int cMoves = 0;
         Ilayout playerBoard = new Board(playerPlay1,cpu);

@@ -129,7 +129,8 @@ public class Board implements Ilayout, Cloneable {
 		//Collections.shuffle(children);
         return children;
 	}
-	
+
+
 	public boolean terminal(){
 		return anyVictory() || full(); 
 	}

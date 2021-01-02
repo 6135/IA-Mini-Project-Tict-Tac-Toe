@@ -10,7 +10,7 @@ import java.util.Random;
  * State
  */
 public class State{
-    private static final double c = Math.sqrt(2)-1;
+    private static final double c = Math.sqrt(2);
     private State parent;
     private Ilayout layout;
     private List<State> childArray;
@@ -38,10 +38,28 @@ public class State{
     public int getVisitCount(){return visitCount;}
 
 
+	/**
+	 * Taking the root as an example, if one of the root's children is a win, this means that, for our bot at least, it's a good choice, even the best choice.
+	 * Thus this fuction, if there is any such children, return only those children as there is no point in running statistics for any other non win boards.
+     * This function is true for any board, making it implementable for any class that implements Ilayout properly. 
+	 * (less blind searching)
+     * @param children The array of children to check from
+	 * @return The list of children that matters, or the original if none is win.
+	 */
+	private List<Ilayout> returnIf(List<Ilayout> children){
+		List<Ilayout> winChild = new ArrayList<>();
+		for (Ilayout ilayout : children) {
+			if(ilayout.status() == agentHasNextMove().getSymbol()){
+				winChild.add(ilayout);
+			}
+		}
+		return winChild.isEmpty() ? children : winChild;
+	}
+    
     public List<State> makeChildren(){
         if(childArray.isEmpty()){
             List<State> children = new ArrayList<>();
-            for(Ilayout l : layout.children()){
+            for(Ilayout l : returnIf(layout.children())){
                 children.add(new State(l,this));
             }
             setChildArray(children);
