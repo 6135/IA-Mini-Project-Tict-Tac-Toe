@@ -51,7 +51,7 @@ public class State{
 		for (Ilayout ilayout : children) {
 			if(ilayout.status() == agentHasNextMove().getSymbol()){
 				winChild.add(ilayout);
-			}
+            }
 		}
 		return winChild.isEmpty() ? children : winChild;
 	}
@@ -65,8 +65,8 @@ public class State{
             setChildArray(children);
             return children;
         } else return getChildArray();
-
     }
+
     public void visit(){this.visitCount++;}
     public void addWinScore(double add){this.winScore+=add;}
 

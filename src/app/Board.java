@@ -121,8 +121,9 @@ public class Board implements Ilayout, Cloneable {
 					b = (Board) this.clone();
 					b.player = player.opponent(); // next to move
 					b.board[i][j]=player.getSymbol(); //that moved
-					if(!children.contains(b))
+					if(!children.contains(b) && !closeHoles(b.player.getSymbol()) )
 						children.add(b);
+					
 				}
 			}
 		}
@@ -130,6 +131,37 @@ public class Board implements Ilayout, Cloneable {
         return children;
 	}
 
+	public boolean closeHoles(char symbol){
+		for (int i = 0; i < dim; i++) {
+			if(closeCol(i) || closeRow(i))
+				return true;
+		}
+		return true;
+	}
+
+	private closeCol(int col){
+		for (int i = 0; i < dim; i++) {
+			
+		}
+	}
+
+	private closeRow(int row){
+		for (int i = 0; i < dim; i++) {
+			
+		}
+	}
+
+	private closeLRD(){
+		for (int i = 1; i < board.length; i++) 
+            if(board[i-1][i-1] != board[i][i])
+                return false;
+	}
+
+	private closeRLD(){
+		for (int i = 1; i < board.length; i++) 
+            if(board[i-1][board.length-i] != board[i][board.length-(i+1)])
+                return false;
+	}
 
 	public boolean terminal(){
 		return anyVictory() || full(); 
