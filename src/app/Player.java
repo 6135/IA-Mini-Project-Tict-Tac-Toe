@@ -40,7 +40,7 @@ public class Player implements Agent{
     public Agent opponent(){return opponent;}
 
     @Override
-    public Board move(Board b) {
+    public Ilayout move(Ilayout b) {
         Scanner sc = new Scanner(System.in);
         b = b.move(sc.nextInt());
         return b;

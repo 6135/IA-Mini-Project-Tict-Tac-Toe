@@ -9,7 +9,8 @@ import java.util.Random;
 /**
  * State
  */
-public class State implements Comparable<State> {
+public class State{
+    private static final double c = Math.sqrt(2);
     private State parent;
     private Ilayout layout;
     private List<State> childArray;
@@ -37,10 +38,28 @@ public class State implements Comparable<State> {
     public int getVisitCount(){return visitCount;}
 
 
+	/**
+	 * Taking the root as an example, if one of the root's children is a win, this means that, for our bot at least, it's a good choice, even the best choice.
+	 * Thus this fuction, if there is any such children, return only those children as there is no point in running statistics for any other non win boards.
+     * This function is true for any board, making it implementable for any class that implements Ilayout properly. 
+	 * (less blind searching)
+     * @param children The array of children to check from
+	 * @return The list of children that matters, or the original if none is win.
+	 */
+	private List<Ilayout> returnIf(List<Ilayout> children){
+		List<Ilayout> winChild = new ArrayList<>();
+		for (Ilayout ilayout : children) {
+			if(ilayout.status() == agentHasNextMove().getSymbol()){
+				winChild.add(ilayout);
+			}
+		}
+		return winChild.isEmpty() ? children : winChild;
+	}
+    
     public List<State> makeChildren(){
         if(childArray.isEmpty()){
             List<State> children = new ArrayList<>();
-            for(Ilayout l : layout.children()){
+            for(Ilayout l : returnIf(layout.children())){
                 children.add(new State(l,this));
             }
             setChildArray(children);
@@ -55,26 +74,22 @@ public class State implements Comparable<State> {
         if(visitCount == 0)
             return Double.MAX_VALUE;
         int parentVisits = parent.getVisitCount();
-        double expr1 = this.winScore / this.visitCount; 
-        double expr2 = Math.sqrt(2) * (Math.sqrt((Math.log(parentVisits) / this.visitCount)));
-        return expr1+expr2;
+        return (this.winScore / this.visitCount) + (c * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
     }
 
-    @Override
-    public int compareTo(State o) {
-        return (int) Math.signum(ucbCalc() - o.ucbCalc());
-    }
+
+    private static Comparator<State> cmpUCB = new Comparator<>() {
+        public int compare(State o1, State o2) {
+            return (int) Math.signum(o1.ucbCalc() - o2.ucbCalc());
+        }
+    }; 
 
     public static State bestChildUCB(State root){
-        return Collections.max(root.getChildArray());
+        return Collections.max(root.getChildArray(), cmpUCB );
     }
-    public static State bestEnemyChildUCB(State root){
-        return Collections.min(root.getChildArray());
-    }
-    
     private static Comparator<State> cmpMaxScore = new Comparator<>() {
         public int compare(State o1, State o2) {
-            return (int) Math.signum(o1.visitCount - o2.visitCount);
+            return (int) Math.signum((o1.winScore/o1.visitCount) - (double) (o2.winScore/o2.visitCount));
         }
     };
 
@@ -85,11 +100,6 @@ public class State implements Comparable<State> {
     @Override
     public String toString() {
         return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
-    }
-
-    public State getRandomChild(){
-        int nextRandom = rand.nextInt(childArray.size());
-        return childArray.get(nextRandom);
     }
 
     public Agent agentHasNextMove(){

@@ -14,12 +14,12 @@ public class MCTS implements Agent{
 
     }
 
-    public Board move(Board b){
+    public Ilayout move(Ilayout b){
         State root = new State(b, null);
         if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < 1000;iteration++){
+        for(int iteration = 0; iteration < 10_000;iteration++){
             //System.out.println(iteration);
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
@@ -36,17 +36,13 @@ public class MCTS implements Agent{
         }
         //System.out.println(root.getVisitCount() + " " + root.getWinScore());
         //System.out.println(root.getChildArray());
-        return (Board) State.bestChildScore(root).getLayout();
+        return State.bestChildScore(root).getLayout();
     }
     
     private State mctsStateSelection(State root){
-        // TODO: Method is probably wrong taking into cosideration that ROOT stores the player that has the next Move and not the player that has moved
         State selected = root;
         while(!selected.getChildArray().isEmpty())
-            //if(selected.getLayout().getAgent().equals(this))
-                selected = State.bestChildUCB(selected);
-            //else if(selected.getLayout().getAgent().equals(opponent))
-                //selected = State.bestEnemyChildUCB(selected);
+            selected = State.bestChildUCB(selected);
         return selected;
     }
 
@@ -56,41 +52,37 @@ public class MCTS implements Agent{
         //System.out.println(selected.getChildArray());
     }
 
+
+
+    private void mctsBackPropagation(State selected, char result){
+        State temp = selected;
+        while (temp != null) {
+            temp.visit();
+            if (temp.agentThatMoved().getSymbol() == result )
+                temp.addWinScore(1.0);
+            else if(result == 'f')
+                temp.addWinScore(0.5);
+
+            temp = temp.getParent();
+        }
+    }
+
     private char mctsStateSimulate(State selected){
-        Board temp = new Board((Board)selected.getLayout());
-        if(temp.status() == opponent.getSymbol()){
-            //System.out.println("here");
-            selected.setWinCount(Integer.MIN_VALUE);
+        Ilayout temp = (Ilayout) selected.getLayout().clone();
+        char status = temp.status();
+        if(status == opponent.getSymbol()) {
+            /**
+             * If a child is terminal, and results in a loss, this means that if the parent board is chosen, the game will result in a loss if optimal plays are made
+             * So if a child is terminal and lost, we need to tell the algorithm that choosing that board, or even exploring it would be costly and uncesseray as it would lead to game loss
+             **/ //
+            selected.getParent().setWinCount(Integer.MIN_VALUE);
             return temp.status();
         }
+        
         while(!temp.terminal())
             temp = temp.randomMove();
             
         return temp.status();
-    }
-
-    private void mctsBackPropagation(State selected, char result){
-        State temp = selected;
-        while(temp != null){
-            temp.visit();
-            // if(result == 'f'){
-            //     //System.out.println(temp.agentThatMoved().getName());
-            //     if(temp.agentThatMoved().equals(this))
-            //         temp.addWinScore(0.5);
-            //     else temp.addWinScore(-0.5);
-            // }
-            // if(result == getSymbol()){
-            //     //System.out.println(temp.agentThatMoved().getName());
-            //     if(temp.agentThatMoved().equals(this))
-            //         temp.addWinScore(1);
-            //     else temp.addWinScore(-1);
-            // }
-            if(temp.agentThatMoved().getSymbol() == result)
-                temp.addWinScore(1.0);
-            if(result == 'f')
-                temp.addWinScore(1);
-            temp = temp.getParent();
-        }
     }
 
     @Override
