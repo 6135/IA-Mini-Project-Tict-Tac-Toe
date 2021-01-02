@@ -22,7 +22,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+        
 
         char[][] playerPlay1 = { {'X','\0','\0'}, {'\0','\0','\0'}, {'\0','\0','\0'} };
         char[][] botExpectedPlay1 = { {'X','\0','\0'}, {'\0','O','\0'}, {'\0','\0','\0'} };
@@ -49,7 +49,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+           
 
         char[][] playerPlay1 = { {'X','X','\0'}, {'\0','O','\0'}, {'\0','\0','\0'} };
         char[][] botExpectedPlay1 = { {'X','X','O'}, {'\0','O','\0'}, {'\0','\0','\0'} };
@@ -75,7 +75,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+           
 
         char[][] playerPlay1 = { {'X','X','O'}, {'\0','O','\0'}, {'X','\0','\0'} };
         char[][] botExpectedPlay1 = { {'X','X','O'}, {'O','O','\0'}, {'X','\0','\0'} };
@@ -101,7 +101,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+           
 
         char[][] playerPlay1 = { {'X','X','O'}, {'O','O','X'}, {'X','\0','\0'} };
         char[][] botExpectedPlay1 = { {'X','X','O'}, {'O','O','X'}, {'X','O','\0'} };
@@ -130,7 +130,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+          
 
         char[][] playerPlay1 = { {'X','\0','\0'}, {'\0','O','\0'}, {'\0','\0','X'} };
         char[][] botExpectedPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'\0','\0','X'} };
@@ -161,7 +161,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+           
 
         char[][] playerPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'\0','X','X'} };
         char[][] botExpectedPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'O','X','X'} };
@@ -191,7 +191,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+            
 
         char[][] playerPlay1 = { {'X','O','X'}, {'\0','O','\0'}, {'O','X','X'} };
         char[][] botExpectedPlay = { {'X','O','X'}, {'\0','O','O'}, {'O','X','X'} };
@@ -221,7 +221,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+          
 
         char[][] playerPlay1 = { {'O','X','\0'}, {'\0','X','\0'}, {'\0','\0','\0'} };
         char[][] botExpectedPlay = { {'O','X','\0'}, {'\0','X','\0'}, {'\0','O','\0'} };
@@ -251,7 +251,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu = new MCTS('O');
 
         p1.setOpponent(cpu);
-        cpu.setOpponent(p1);    
+           
 
         char[][] playerPlay1 = { {'\0','X','O'},{'X','O','X'},{'\0','\0','\0'} };
         char[][] botExpectedPlay = { {'\0','X','O'}, {'X','O','X'}, {'O','\0','\0'} };
@@ -280,7 +280,7 @@ public class TicTacToeOptimalGameTest {
         Agent cpu2 = new MCTS('O');
 
         cpu1.setOpponent(cpu2);
-        cpu2.setOpponent(cpu1);    
+          
 
         Ilayout b;
         Agent currentPlayer = cpu1;
