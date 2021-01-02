@@ -19,7 +19,7 @@ public class MCTS implements Agent{
         if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < 5000;iteration++){
+        for(int iteration = 0; iteration < 10_000;iteration++){
             //System.out.println(iteration);
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
@@ -60,8 +60,9 @@ public class MCTS implements Agent{
             temp.visit();
             if (temp.agentThatMoved().getSymbol() == result )
                 temp.addWinScore(1.0);
-            else if (result == 'f')
+            else if(result == 'f')
                 temp.addWinScore(0.5);
+
             temp = temp.getParent();
         }
     }
@@ -74,9 +75,10 @@ public class MCTS implements Agent{
              * If a child is terminal, and results in a loss, this means that if the parent board is chosen, the game will result in a loss if optimal plays are made
              * So if a child is terminal and lost, we need to tell the algorithm that choosing that board, or even exploring it would be costly and uncesseray as it would lead to game loss
              **/ //
-            selected.getParent().setWinCount(Integer.MIN_VALUE);//If the parent board were to be thi
+            selected.getParent().setWinCount(Integer.MIN_VALUE);
             return temp.status();
         }
+        
         while(!temp.terminal())
             temp = temp.randomMove();
             

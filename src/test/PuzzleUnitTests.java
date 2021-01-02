@@ -201,6 +201,7 @@ public class PuzzleUnitTests {
         assertEquals('O', status);
     }
 
+
     @Test 
     public void testBoardEquals(){
         char[][] board = { {'\0','X','\0'} , {'\0','\0','\0'} , {'\0','O','\0'} };
@@ -219,7 +220,5 @@ public class PuzzleUnitTests {
         assertEquals(board2,board3);
         assertEquals(board2,board4);
         assertEquals(board3,board4);
-
-        System.out.println("Done");
     }
 }

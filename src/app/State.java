@@ -10,6 +10,7 @@ import java.util.Random;
  * State
  */
 public class State{
+    private static final double c = Math.sqrt(2)-1;
     private State parent;
     private Ilayout layout;
     private List<State> childArray;
@@ -55,7 +56,7 @@ public class State{
         if(visitCount == 0)
             return Double.MAX_VALUE;
         int parentVisits = parent.getVisitCount();
-        return (this.winScore / this.visitCount) + ( Math.sqrt(2) * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
+        return (this.winScore / this.visitCount) + (c * ( Math.sqrt( ( Math.log(parentVisits) / this.visitCount) ) ) ) ;
     }
 
 
@@ -70,7 +71,7 @@ public class State{
     }
     private static Comparator<State> cmpMaxScore = new Comparator<>() {
         public int compare(State o1, State o2) {
-            return (int) Math.signum(o1.visitCount - (double) o2.visitCount);
+            return (int) Math.signum((o1.winScore/o1.visitCount) - (double) (o2.winScore/o2.visitCount));
         }
     };
 

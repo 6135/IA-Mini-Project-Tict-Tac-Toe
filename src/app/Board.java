@@ -2,6 +2,7 @@ package app;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -58,31 +59,23 @@ public class Board implements Ilayout, Cloneable {
 	public int getDim(){
 		return dim;
 	}
-
-    /**
-     * Implemented for good measure
-     * @return the hash code of the given board
-     */
-    @Override
-    public int hashCode() {
-		return Arrays.hashCode(board);
-	}
     /**
      * @return comparison function so that contains works properly
      */
-	@Override
 	public boolean equals(Object l) {
 		Board b;
 
 		if(l instanceof Board)
 			b = (Board) l;
 		else return false;
+		char[][] rotation90 = RotateArray(board, dim);
+		char[][] rotation180 = RotateArray(rotation90, dim);
+		char[][] rotation270 = RotateArray(rotation180, dim);
 
-		for(int i = 0; i<dim;i++)
-			for(int j = 0; j < dim; j++)
-				if(board[i][j] != b.board[i][j])
-					return false;
-		return true;
+		return Arrays.deepEquals(board, b.board) ||
+			Arrays.deepEquals(rotation90, b.board) ||
+			Arrays.deepEquals(rotation180, b.board) ||
+			Arrays.deepEquals(rotation270, b.board);
 	}
 	// @Override
 	// public boolean equals(Object l){
@@ -104,6 +97,17 @@ public class Board implements Ilayout, Cloneable {
 	// 		}
 	// 	return true;	
 	// }
+	public static char[][] RotateArray(char[][] matrix, int dim) {
+		char[][] ret = new char[dim][dim];
+	
+		for (int i = 0; i < dim; ++i) {
+			for (int j = 0; j < dim; ++j) {
+				ret[i][j] = matrix[dim - j - 1][i];
+			}
+		}
+	
+		return ret;
+	}
 	/**
 	 * @return List of all possible movements, excluding one that equals the initial layout, and any repeated 
 	 */
@@ -117,7 +121,8 @@ public class Board implements Ilayout, Cloneable {
 					b = (Board) this.clone();
 					b.player = player.opponent(); // next to move
 					b.board[i][j]=player.getSymbol(); //that moved
-					children.add(b);
+					if(!children.contains(b))
+						children.add(b);
 				}
 			}
 		}
@@ -283,7 +288,6 @@ public class Board implements Ilayout, Cloneable {
 	@Override
 	public void resultMessage() {
 		char status = status();
-		System.out.println(status);
 		if(status == player.getSymbol())
 			System.out.println(player.getName() + " has won the game");
 		else if(status == 'f')
@@ -298,10 +302,4 @@ public class Board implements Ilayout, Cloneable {
 	@Override
 	public Agent getAgent(){return player;}
 
-	private int operateRotation(int pos, int dim){
-		if(pos+1 > dim)
-			System.exit(1);
-		return (int) (dim-pos-1);
-
-	}
 }
