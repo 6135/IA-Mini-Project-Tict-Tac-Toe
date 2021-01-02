@@ -121,7 +121,7 @@ public class Board implements Ilayout, Cloneable {
 					b = (Board) this.clone();
 					b.player = player.opponent(); // next to move
 					b.board[i][j]=player.getSymbol(); //that moved
-					if(!children.contains(b) && !b.uncloseHoles() )
+					if(!children.contains(b) )
 						children.add(b);
 					
 				}
