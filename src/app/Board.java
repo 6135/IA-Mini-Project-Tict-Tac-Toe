@@ -121,7 +121,7 @@ public class Board implements Ilayout, Cloneable {
 					b = (Board) this.clone();
 					b.player = player.opponent(); // next to move
 					b.board[i][j]=player.getSymbol(); //that moved
-					if(!children.contains(b) && !closeHoles(b.player.getSymbol()) )
+					if(!children.contains(b) && !b.closeHoles() )
 						children.add(b);
 					
 				}
@@ -131,36 +131,42 @@ public class Board implements Ilayout, Cloneable {
         return children;
 	}
 
-	public boolean closeHoles(char symbol){
+	public boolean closeHoles(){
 		for (int i = 0; i < dim; i++) {
-			if(closeCol(i) || closeRow(i))
+			if(closeCol(i,player.getSymbol())+closeCol(i,'\0')==dim || closeRow(i,player.getSymbol())+closeRow(i,'\0')==dim)
 				return true;
 		}
-		return true;
+		return (closeLRD(player.getSymbol())+ closeLRD('\0')==dim|| closeRLD(player.getSymbol())+closeRLD('\0')==dim);
 	}
 
-	private closeCol(int col){
+	private int closeCol(int col,char c){
+		int n=0;
 		for (int i = 0; i < dim; i++) {
-			
+			if(board[i][col]==c) n++;
 		}
+		return n;
 	}
 
-	private closeRow(int row){
+	private int closeRow(int row,char c){
+		int n=0;
 		for (int i = 0; i < dim; i++) {
-			
+			if(board[row][i]==c) n++;
 		}
+		return n;
 	}
 
-	private closeLRD(){
+	private int closeLRD(char c){
+		int n=0;
 		for (int i = 1; i < board.length; i++) 
-            if(board[i-1][i-1] != board[i][i])
-                return false;
+			if(board[i-1][i-1]==c) n++;
+		return n;
 	}
 
-	private closeRLD(){
+	private int closeRLD(char c){
+		int n=0;
 		for (int i = 1; i < board.length; i++) 
-            if(board[i-1][board.length-i] != board[i][board.length-(i+1)])
-                return false;
+			if(board[i-1][board.length-i] == c) n++;
+		return n;
 	}
 
 	public boolean terminal(){
