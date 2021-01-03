@@ -1,12 +1,12 @@
 package app;
 
 public interface Agent {
-
-    Ilayout move(Ilayout b);
-    void setOpponent(Agent a);
-    Agent opponent();
-    char getSymbol();
-    void setSymbol(char symbol);
-    void setName(String name);
-    String getName();
+    public Ilayout move(Ilayout b);
+    public void singleSetOpponent(Agent a);
+    public void setOpponent(Agent a);
+    public Agent opponent();
+    public char getSymbol();
+    public void setSymbol(char symbol);
+    public void setName(String name);
+    public String getName();
 }

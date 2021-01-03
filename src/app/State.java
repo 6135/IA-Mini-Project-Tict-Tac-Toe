@@ -39,9 +39,9 @@ public class State{
 
 
 	/**
-	 * Taking the root as an example, if one of the root's children is a win, this means that, for our bot at least, it's a good choice, even the best choice.
-	 * Thus this fuction, if there is any such children, return only those children as there is no point in running statistics for any other non win boards.
-     * This function is true for any board, making it implementable for any class that implements Ilayout properly. 
+	 * Taking the root as an example, if one of the root's children is a win, this means that it's a good choice, even the best choice.
+	 * Thus this fuction, if there is any such children, returns only those children as there is no point in running statistics for any other non-win boards.
+     * This function is true for any board, making it usable for any class that implements Ilayout properly. 
 	 * (less blind searching)
      * @param children The array of children to check from
 	 * @return The list of children that matters, or the original if none is win.
