@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import app.*;
 public class TicTacToeOptimalGameTest {
-    private static final int iter =  1_00;
-    private static final double delta = 0.2;
+    private static final int iter =  1_000;
+    private static final double delta = 0.1;
     @Test (timeout = 100_000)
     public void algorithmTest1(){
         int testID = 1;
