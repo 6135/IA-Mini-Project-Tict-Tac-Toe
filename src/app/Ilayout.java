@@ -10,21 +10,14 @@ public interface Ilayout{
      * @return the children of the reciever
      */
     List<Ilayout> children();
-    /**
-     * @return true if the receiver equals the argument 'I'; return false otherwise
-     */
-    boolean isGoal(Ilayout i);
-    /**
-    *@return the cost for moving from the input config to the receiver.
-    */
-    double getG();
+    
     /**
      * @return the board of the Ilayout
      */
     String toString();
     public Object clone();
     public Ilayout move(int pos) throws IndexOutOfBoundsException,IllegalStateException;
-    public Ilayout randomMove();
+    public Ilayout playout();
     public char status();
     public void resultMessage();
     public void setAgent(Agent agent);

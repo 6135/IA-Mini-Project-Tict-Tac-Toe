@@ -121,8 +121,9 @@ public class Board implements Ilayout, Cloneable {
 					b = (Board) this.clone();
 					b.player = player.opponent(); // next to move
 					b.board[i][j]=player.getSymbol(); //that moved
-					if(!children.contains(b))
+					if(!children.contains(b) )
 						children.add(b);
+					
 				}
 			}
 		}
@@ -130,6 +131,44 @@ public class Board implements Ilayout, Cloneable {
         return children;
 	}
 
+
+	public boolean uncloseHoles(){
+		for (int i = 0; i < dim; i++) {
+			if( (closeCol(i,player.getSymbol())==dim-1 && closeCol(i,'\0')==1) || (closeRow(i,player.getSymbol())==dim-1 && closeRow(i,'\0')==1))
+				return true;
+		}
+		return ( (closeLRD(player.getSymbol())== dim-1 && closeLRD('\0')==1) || (closeRLD(player.getSymbol())== dim-1 && closeRLD('\0')==1) );
+	}
+
+	private int closeCol(int col,char c){
+		int n=0;
+		for (int i = 0; i < dim; i++) {
+			if(board[i][col]==c) n++;
+		}
+		return n;
+	}
+
+	private int closeRow(int row,char c){
+		int n=0;
+		for (int i = 0; i < dim; i++) {
+			if(board[row][i]==c) n++;
+		}
+		return n;
+	}
+
+	private int closeLRD(char c){
+		int n=0;
+		for (int i = 0; i < board.length; i++) 
+			if(board[i][i]==c) n++;
+		return n;
+	}
+
+	private int closeRLD(char c){
+		int n=0;
+		for (int i = 0; i < board.length; i++) 
+			if(board[i][(board.length-1)-i] == c) n++;
+		return n;
+	}
 
 	public boolean terminal(){
 		return anyVictory() || full(); 
@@ -263,7 +302,7 @@ public class Board implements Ilayout, Cloneable {
 		return copy;	
 	}
 
-	public Board randomMove(){
+	private Ilayout lightPlayout(){
 		Board copy = new Board(this);
 		int i = rand.nextInt(dim*dim);
 		int r = (i/dim);
@@ -273,17 +312,29 @@ public class Board implements Ilayout, Cloneable {
 			copy.player = player.opponent();
 			return copy;
 		}
-		else return randomMove();
+		else return lightPlayout();
+	}
+
+	private Ilayout heavyPlayout(){
+		/**
+		 * Part I - return imediate win;
+		 * Part II - If there is no win and opponent can win next turn fill holes
+		 * Part III - If no other condition applies random(future heuristics)
+		 */
+		Board copy = new Board(this);
+
+		List<Ilayout> children = copy.children();
+		for (Ilayout c : children) {
+			if(c.status()==copy.getAgent().getSymbol()) return c;
+			//else if(!c.uncloseHoles())
+		}
+
+		return copy;
 	}
 
 	@Override
-	public boolean isGoal(Ilayout i) {
-		return false;
-	}
-
-	@Override
-	public double getG() {
-		return 0;
+	public Ilayout playout(){
+		return heavyPlayout();
 	}
 
 	@Override

@@ -128,7 +128,7 @@ public class PuzzleUnitTests {
         Agent cpu2 = new MCTS('O');
 
         cpu1.setOpponent(cpu2);
-        cpu2.setOpponent(cpu1);
+        
 
         Board b = new Board(board,cpu1);
         char s=b.status();
@@ -185,7 +185,7 @@ public class PuzzleUnitTests {
         Agent cpu2 = new MCTS('O');
 
         cpu1.setOpponent(cpu2);
-        cpu2.setOpponent(cpu1);
+        
 
         Board b = new Board(board,cpu2);
         char status = b.status();
@@ -220,5 +220,12 @@ public class PuzzleUnitTests {
         assertEquals(board2,board3);
         assertEquals(board2,board4);
         assertEquals(board3,board4);
+    }
+
+    @Test
+    public void testuncloseHoles(){
+        char [][] board ={
+            {}
+        };
     }
 }
