@@ -132,14 +132,15 @@ public class Board implements Ilayout, Cloneable {
 	}
 
 
-	public int uncloseHoles(){
+	public int uncloseHoles(Agent a){
 		int h=0;
 		for (int i = 0; i < dim; i++) {
-			if(closeCol(i,player.getSymbol())==dim-1 && closeCol(i,'\0')==1) h++;
-			if(closeRow(i,player.getSymbol())==dim-1 && closeRow(i,'\0')==1) h++;
+			if(closeCol(i,a.getSymbol())==dim-1 && closeCol(i,'\0')==1) h++;
+			if(closeRow(i,a.getSymbol())==dim-1 && closeRow(i,'\0')==1) h++;
 		}
-		if(closeLRD(player.getSymbol())== dim-1 && closeLRD('\0')==1) h++;
-		if(closeRLD(player.getSymbol())== dim-1 && closeRLD('\0')==1) h++;
+		if(closeLRD(a.getSymbol())== dim-1 && closeLRD('\0')==1) h++;
+		if(closeRLD(a.getSymbol())== dim-1 && closeRLD('\0')==1) h++;
+		
 		return h;
 	}
 
@@ -159,7 +160,7 @@ public class Board implements Ilayout, Cloneable {
 		return n;
 	}
 
-	private int closeLRD(char c){
+	public int closeLRD(char c){
 		int n=0;
 		for (int i = 0; i < board.length; i++) 
 			if(board[i][i]==c) n++;
@@ -325,10 +326,16 @@ public class Board implements Ilayout, Cloneable {
 		 * Part III - If no other condition applies random(future heuristics)
 		 */
 		Board copy = new Board(this);
-		int cH=copy.uncloseHoles();
+		int cH=uncloseHoles(copy.player.opponent());
+		
+		Ilayout child = null;
 		List<Ilayout> children = copy.children();
-		for (Ilayout c : children) 
-			if(c.status()==copy.getAgent().getSymbol() || cH> ((Board)c).uncloseHoles()) return c;
+		for (Ilayout c : children) {	
+			if(c.status()==copy.getAgent().getSymbol() ) return c;
+			if( cH> ((Board)c).uncloseHoles(c.getAgent())) child=c;
+		}
+		if(child!=null) return child;
+			
 
 		return lightPlayout();
 	}
