@@ -86,7 +86,10 @@ public class MCTS implements Agent{
     }
 
     @Override
-    public void setOpponent(Agent a) {this.opponent = a;}
+    public void setOpponent(Agent a) {
+        this.opponent = a;
+        a.singleSetOpponent(this);
+    }
 
     @Override
     public Agent opponent() {return opponent;}
@@ -113,5 +116,11 @@ public class MCTS implements Agent{
             return getName() == mcts.getName() && getSymbol() == mcts.getSymbol();
         }
         return false;
+    }
+
+    @Override
+    public void singleSetOpponent(Agent a) {
+        this.opponent = a;
+
     }
 }

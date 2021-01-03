@@ -27,7 +27,15 @@ public class Player implements Agent{
     @Override
     public void setSymbol(char c){this.c = c;}
     @Override
-    public void setOpponent(Agent op){this.opponent = op;}
+    public void setOpponent(Agent op){
+        this.opponent = op;
+        op.singleSetOpponent(this);
+    }
+    @Override
+    public void singleSetOpponent(Agent a) {
+        this.opponent = a;
+    }
+
     @Override
     public void setName(String name){this.playerName = name;}
     @Override
@@ -45,6 +53,8 @@ public class Player implements Agent{
         b = b.move(sc.nextInt());
         return b;
     }
+
+
 
 
 
