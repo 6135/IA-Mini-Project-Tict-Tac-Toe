@@ -80,7 +80,7 @@ public class MCTS implements Agent{
         }
         
         while(!temp.terminal())
-            temp = temp.randomMove();
+            temp = temp.playout();
             
         return temp.status();
     }

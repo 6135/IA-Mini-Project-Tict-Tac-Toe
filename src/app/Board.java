@@ -131,6 +131,7 @@ public class Board implements Ilayout, Cloneable {
         return children;
 	}
 
+
 	public boolean uncloseHoles(){
 		for (int i = 0; i < dim; i++) {
 			if( (closeCol(i,player.getSymbol())==dim-1 && closeCol(i,'\0')==1) || (closeRow(i,player.getSymbol())==dim-1 && closeRow(i,'\0')==1))
@@ -301,7 +302,7 @@ public class Board implements Ilayout, Cloneable {
 		return copy;	
 	}
 
-	public Board randomMove(){
+	private Ilayout lightPlayout(){
 		Board copy = new Board(this);
 		int i = rand.nextInt(dim*dim);
 		int r = (i/dim);
@@ -311,17 +312,29 @@ public class Board implements Ilayout, Cloneable {
 			copy.player = player.opponent();
 			return copy;
 		}
-		else return randomMove();
+		else return lightPlayout();
+	}
+
+	private Ilayout heavyPlayout(){
+		/**
+		 * Part I - return imediate win;
+		 * Part II - If there is no win and opponent can win next turn fill holes
+		 * Part III - If no other condition applies random(future heuristics)
+		 */
+		Board copy = new Board(this);
+
+		List<Ilayout> children = copy.children();
+		for (Ilayout c : children) {
+			if(c.status()==copy.getAgent().getSymbol()) return c;
+			//else if(!c.uncloseHoles())
+		}
+
+		return copy;
 	}
 
 	@Override
-	public boolean isGoal(Ilayout i) {
-		return false;
-	}
-
-	@Override
-	public double getG() {
-		return 0;
+	public Ilayout playout(){
+		return heavyPlayout();
 	}
 
 	@Override
