@@ -19,7 +19,7 @@ public class MCTS implements Agent{
         if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < 10_000;iteration++){
+        for(int iteration = 0; iteration < 5_000;iteration++){
             //System.out.println(iteration);
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
