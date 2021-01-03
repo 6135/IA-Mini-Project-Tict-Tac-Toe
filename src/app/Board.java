@@ -132,12 +132,15 @@ public class Board implements Ilayout, Cloneable {
 	}
 
 
-	public boolean uncloseHoles(){
+	public int uncloseHoles(){
+		int h=0;
 		for (int i = 0; i < dim; i++) {
-			if( (closeCol(i,player.getSymbol())==dim-1 && closeCol(i,'\0')==1) || (closeRow(i,player.getSymbol())==dim-1 && closeRow(i,'\0')==1))
-				return true;
+			if(closeCol(i,player.getSymbol())==dim-1 && closeCol(i,'\0')==1) h++;
+			if(closeRow(i,player.getSymbol())==dim-1 && closeRow(i,'\0')==1) h++;
 		}
-		return ( (closeLRD(player.getSymbol())== dim-1 && closeLRD('\0')==1) || (closeRLD(player.getSymbol())== dim-1 && closeRLD('\0')==1) );
+		if(closeLRD(player.getSymbol())== dim-1 && closeLRD('\0')==1) h++;
+		if(closeRLD(player.getSymbol())== dim-1 && closeRLD('\0')==1) h++;
+		return h;
 	}
 
 	private int closeCol(int col,char c){
@@ -322,14 +325,12 @@ public class Board implements Ilayout, Cloneable {
 		 * Part III - If no other condition applies random(future heuristics)
 		 */
 		Board copy = new Board(this);
-
+		int cH=copy.uncloseHoles();
 		List<Ilayout> children = copy.children();
-		for (Ilayout c : children) {
-			if(c.status()==copy.getAgent().getSymbol()) return c;
-			//else if(!c.uncloseHoles())
-		}
+		for (Ilayout c : children) 
+			if(c.status()==copy.getAgent().getSymbol() || cH> ((Board)c).uncloseHoles()) return c;
 
-		return copy;
+		return lightPlayout();
 	}
 
 	@Override
