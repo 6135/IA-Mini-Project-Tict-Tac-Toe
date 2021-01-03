@@ -14,8 +14,8 @@ public class Main {
         System.out.println("Enter a number from 0-8 to make a move.");
         Agent cpu1 = new MCTS('O');     
 
-        p1.setOpponent(cpu1);
-        cpu1.setOpponent(p1);
+        p1.singleSetOpponent(cpu1);
+        cpu1.singleSetOpponent(p1);
 
         Ilayout b;
         Agent agent = p1;
