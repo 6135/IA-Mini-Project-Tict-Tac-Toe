@@ -118,7 +118,8 @@ public class PuzzleUnitTests {
     }
 
     @Test (timeout = 3000)
-    public void testStatus1(){
+    public void testStatus(){
+        int testID = 1;
         char [][] board ={
             {'\0','X','O'},
             {'\0','O','O'},
@@ -133,13 +134,18 @@ public class PuzzleUnitTests {
         Board b = new Board(board,cpu1);
         char s=b.status();
         
+        if( s!='X' )
+            System.out.println("Failed testStatus" + testID);
         assertTrue(s=='X');
+        System.out.println("Passed testStatus" + testID);
+        
 
 
     }
 
     @Test (timeout = 3000)
     public void testStatus2(){
+        int testID=2;
         char [][] board ={
             {'X','X','O'},
             {'O','O','X'},
@@ -147,16 +153,22 @@ public class PuzzleUnitTests {
         };
 
         Agent cpu1 = new MCTS('X');
+        Agent cpu2 = new MCTS('O');
+        cpu1.setOpponent(cpu2);
         Board b = new Board(board,cpu1);
 
         char s=b.status();
+        
+        if( s!='f' )
+            System.out.println("Failed testStatus" + testID);
         assertTrue(s=='f');
-
+        System.out.println("Passed testStatus" + testID);
 
     }
 
     @Test (timeout = 3000)
     public void testStatus3(){
+        int testID=3;
         char [][] board ={
             {'\0','X','O'},
             {'O','O','X'},
@@ -164,18 +176,24 @@ public class PuzzleUnitTests {
         };
 
         Agent cpu1 = new MCTS('X');
+        Agent cpu2 = new MCTS('O');
+        cpu1.setOpponent(cpu2);
         Board b = new Board(board,cpu1);
         
 
 
         char s=b.status();
-        
+        if( s!='i' )
+            System.out.println("Failed testStatus" + testID);
         assertTrue(s=='i');
+        System.out.println("Passed testStatus" + testID);
+       
     }
 
 
     @Test (timeout = 1000)
     public void testVictory(){
+        int testID = 1;
         char [][] board ={
             {'X','O','\0'},
             {'O','X','\0'},
@@ -188,19 +206,40 @@ public class PuzzleUnitTests {
         
 
         Board b = new Board(board,cpu2);
-        char status = b.status();
-        assertEquals('X', status);
-    
+        char s = b.status();
+        
+
+        if( s!='X' )
+            System.out.println("Failed testVictory" + testID);
+        assertEquals('X', s);
+        System.out.println("Passed testVictory" + testID);
+    }
+
+    @Test (timeout = 1000)
+    public void testVictory2(){
+        int testID = 2;
+           
         char[][] board2 ={
             {'X','O','X'},
             {'\0','X','X'},
             {'O','O','O'}
         };
-        b = new Board(board2,cpu1);
-        status = b.status();
-        assertEquals('O', status);
+
+        Agent cpu1 = new MCTS('X');
+        Agent cpu2 = new MCTS('O');
+
+        cpu1.setOpponent(cpu2);
+        Board b = new Board(board2,cpu1);
+        char s = b.status();
+        assertEquals('O', s);
+
+        if( s!='O' )
+            System.out.println("Failed testVictory" + testID);
+        assertTrue(s=='O');
+        System.out.println("Passed testVictory" + testID);
     }
 
+    
 
     @Test 
     public void testBoardEquals(){
@@ -220,12 +259,8 @@ public class PuzzleUnitTests {
         assertEquals(board2,board3);
         assertEquals(board2,board4);
         assertEquals(board3,board4);
+
+        
     }
 
-    @Test
-    public void testuncloseHoles(){
-        char [][] board ={
-            {}
-        };
-    }
 }

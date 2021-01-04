@@ -15,9 +15,10 @@ public class Board implements Ilayout, Cloneable {
 	 */
 	private Agent player;
 	private Random rand = new Random();
+
 	/**
-	 * This function creates a new Board(initial configuration or goal) based on a input string
-	 * @param str configuration of the board 
+	 * This function creates a new Board
+	 * @param p Agent that has the next move
 	 */
 	public Board(Agent p){
 		this.board = new char[dim][dim];
@@ -25,6 +26,11 @@ public class Board implements Ilayout, Cloneable {
 
 	}
 
+	/**
+	 * This function create a new Board
+	 * @param b bidimensional array that represents the state of the board
+	 * @param p Agent that has the next move
+	 */
 	public Board(char[][] b,Agent p){
 		this.board = new char[dim][dim];
 		this.player = p;
@@ -175,75 +181,33 @@ public class Board implements Ilayout, Cloneable {
 	}
 
 	public boolean terminal(){
-		return anyVictory() || full(); 
+		return status()!='i'; 
 	}
 	
     public char status(){
 		if(player.opponent() == null)
-			System.out.println("err null");
+			System.out.println("error opponent is null");
 		return victory() ? (char) player.opponent().getSymbol() : loss() ? (char) player.getSymbol() : full() ? 'f' : 'i';
 	}
 	
-	private boolean anyVictory(){
-        for (int i = 0; i < 3; i++)
-            if((checkRow(i)) || (checkCol(i)))
-                return true;
-        return (checkLRD() || checkRLD());			
-	}
 
 	public boolean victory(){
 		Agent opponent = player.opponent();
 		char mySmbol = opponent.getSymbol();
         for (int i = 0; i < 3; i++)
-            if((checkRow(i) && board[i][0] ==  mySmbol) || (checkCol(i) && board[0][i] ==  mySmbol))
+            if(closeRow(i, mySmbol)==dim || closeCol(i, mySmbol)==dim)
                 return true;
-        return (checkLRD() || checkRLD()) && board[dim/2][dim/2]== mySmbol;		
+        return (closeLRD(mySmbol)==dim || closeRLD(mySmbol)==dim);		
 	}
 
     public boolean loss(){
 		char oppSmbol = player.getSymbol();
         for (int i = 0; i < 3; i++)
-            if((checkRow(i) && board[i][0] ==  oppSmbol) || (checkCol(i) && board[0][i] ==  oppSmbol))
+            if(closeRow(i, oppSmbol)==dim || closeCol(i, oppSmbol)==dim)
                 return true;
-        return (checkLRD() || checkRLD()) && board[dim/2][dim/2]== oppSmbol;
+        return (closeLRD(oppSmbol)==dim || closeRLD(oppSmbol)==dim);
     }
 
-    private boolean checkRow(int row){
-        if(board[row][0]=='\0')
-            return false;
-        for (int i = 1; i < board[row].length; i++) 
-            if(board[row][i-1] != board[row][i])
-                return false;
-        return true;
-    }
-
-    private boolean checkCol(int col){
-        if(board[0][col]=='\0')
-            return false;
-        for (int i = 1; i < board.length; i++)
-            if(board[i-1][col] != board[i][col])
-                return false;
-        return true;
-    }
-
-    private boolean checkLRD(){
-        if(board[0][0]=='\0')
-            return false;
-        for (int i = 1; i < board.length; i++) 
-            if(board[i-1][i-1] != board[i][i])
-                return false;
-        return true;
-    }
-
-    private boolean checkRLD(){
-        
-        if(board[0][2]=='\0')
-            return false;
-        for (int i = 1; i < board.length; i++) 
-            if(board[i-1][board.length-i] != board[i][board.length-(i+1)])
-                return false;
-        return true;
-    }
 	/**
 	 * 
 	 * @return
@@ -361,96 +325,6 @@ public class Board implements Ilayout, Cloneable {
 	public void setAgent(Agent agent){this.player = agent;}
 	@Override
 	public Agent getAgent(){return player;}
-	public Ilayout heuristic(){
-		Board copy=new Board(this);
-		int centre=dim/dim;
-		int pos=0;
-		//create a fork
-		List<Ilayout> children=copy.children();
-		for (Ilayout c : children)
-			if(((Board)c).uncloseHoles()>=2)
-				return c;
-
-		//block opponent fork
-
-		
-		//play center
-		 if(copy.board[centre][centre]=='\0'){
-			copy.board[centre][centre] = player.getSymbol();
-			copy.player = player.opponent();
-		}
-		//opposite corner 
-		else if(oppositeCorner(copy,player.opponent().getSymbol())>=0){
-			pos=oppositeCorner(copy,player.opponent().getSymbol());
-			copy.board[pos/dim][pos%dim]=player.getSymbol();
-			copy.player = player.opponent();
-		}
-		
-		//empty corner
-		else if(emptyCorner(copy)>=0){
-			pos=emptyCorner(copy);
-			copy.board[pos/dim][pos%dim]=player.getSymbol();
-			copy.player = player.opponent();
-
-		}
-
-		//empty side(pos 1,3,5,7)
-		else{
-			pos=emptySide(copy);
-			copy.board[pos/dim][pos%dim]=player.getSymbol();
-			copy.player = player.opponent();
-		}
-		return copy;
-	}
-	public int oppositeCorner(Board b,char symbol){
-		int pos=-1;
-		if(b.board[0][0]==symbol && b.board[dim-1][dim-1]=='\0' ){
-			pos=(dim-1)*dim+(dim-1);
-		}
-		else if(b.board[0][dim-1]==symbol && b.board[dim-1][0]=='\0' ){
-			pos=(dim-1)*dim;
-		}
-		else if(b.board[dim-1][0]==symbol && b.board[0][dim-1]=='\0'){
-			pos=(dim-1);
-		}
-		else if(b.board[dim-1][dim-1]==symbol && b.board[0][0]=='\0'){
-			pos=0;
-		}
-		return pos;
-
-	}
 	
-	public int emptyCorner(Board b){
-		int j=dim-1;
-		int pos=-1;
-		if(b.board[0][0]=='\0'){
-			pos=0;
-		}
-		else if(b.board[0][j]=='\0'){
-			pos=j;
-		}
-		else if(board[j][0]=='\0'){
-			pos=j*dim;
-		}
-		else if(board[j][j]=='\0'){
-			pos=j*dim+j;
-		}
-	}
-	public int emptySide(Board b){
-		int i=(dim/2);
-		int j=(dim-1);
-		if(b.board[0][i]=='\0'){
-			return i;
-		}
-		else if(b.board[i][0]=='\0'){
-			return i*dim;
-		}
-		else if(b.board[i][j]=='\0'){
-			return i*dim+j;
-		}
-		else if(b.board[j][i]=='\0'){
-			return j*dim+i;
-		}
-	}
 
 }
