@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import app.*;
 public class TicTacToeOptimalGameTest {
-    private static final int iter =  1_00;
+    private static final int iter =  100;
     private static final double delta = 0.1;
     @Test (timeout = 100_000)
     public void algorithmTest1(){
@@ -262,6 +262,7 @@ public class TicTacToeOptimalGameTest {
 
         for(int i = 0; i < iter; i++){
             Ilayout botMove = cpu.move(playerBoard);
+            assertEquals(expectedBotBoard,botMove);
             if(botMove.equals(expectedBotBoard))
                 cMoves++;
             //System.out.println(botMove);

@@ -4,6 +4,7 @@ package app;
  * MCTS
  */
 public class MCTS implements Agent{
+    private int iter = 250;
     private String agentName;
     private char symbol;
     private Agent opponent;
@@ -14,12 +15,18 @@ public class MCTS implements Agent{
 
     }
 
+    public MCTS(char symbol, int iter){
+        this.agentName = "CPU";
+        this.symbol = symbol;
+        this.iter = iter;
+    }
+
     public Ilayout move(Ilayout b){
         State root = new State(b, null);
         if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < 5_000;iteration++){
+        for(int iteration = 0; iteration < iter;iteration++){
             //System.out.println(iteration);
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);

@@ -325,6 +325,5 @@ public class Board implements Ilayout, Cloneable {
 	public void setAgent(Agent agent){this.player = agent;}
 	@Override
 	public Agent getAgent(){return player;}
-	
 
 }
