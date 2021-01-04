@@ -10,7 +10,7 @@ import java.util.Random;
  * State
  */
 public class State{
-    private static final double c = 0.9478;
+    private static final double c = 1.41425;
     private State parent;
     private Ilayout layout;
     private List<State> childArray;
