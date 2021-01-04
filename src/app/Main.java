@@ -75,7 +75,7 @@ public class Main {
             //    player2++;
             //else if(b.status() == 'f')
             //    draw++;
-            itr++;
+            //itr++;
             //System.out.println("\'"+b.status()+"\'");
             System.out.println("1.Play again.\n2.Exit.");
             itr=sc.nextInt();
