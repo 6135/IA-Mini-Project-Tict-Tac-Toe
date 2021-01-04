@@ -55,7 +55,10 @@ public class State{
 		}
 		return winChild.isEmpty() ? children : winChild;
 	}
-    
+    /**
+     * 
+     * @return The 
+     */
     public List<State> makeChildren(){
         if(childArray.isEmpty()){
             List<State> children = new ArrayList<>();
@@ -69,7 +72,11 @@ public class State{
 
     public void visit(){this.visitCount++;}
     public void addWinScore(double add){this.winScore+=add;}
-
+    
+    /**
+     * 
+     * @return
+     */
     public double ucbCalc(){
         if(visitCount == 0)
             return Double.MAX_VALUE;

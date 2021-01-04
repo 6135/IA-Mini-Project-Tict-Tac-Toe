@@ -43,12 +43,9 @@ public class Main {
         int itr = 1;
         int player1 = 0,player2 = 0,draw = 0;
         while(itr == 1){
-            
-            /*if(((int)itr%5) == 0)
-                System.out.println(itr);*/
             b = new Board(agent);
             while(!b.terminal()){
-                //Thread.sleep(1000);
+            
                 if(!(p1 instanceof MCTS))
                     System.out.println(agent.getName() + "'s Turn to move!");
                 boolean doneMoving = false;
@@ -60,8 +57,7 @@ public class Main {
                         System.out.println(e.getMessage());
                     }
                 }
-                
-                //if(!(p1 instanceof MCTS))
+
                 System.out.println(b);
                 agent = agent.opponent();
                 

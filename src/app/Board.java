@@ -40,7 +40,7 @@ public class Board implements Ilayout, Cloneable {
 
 
 	/**
-	 * This function creates a new Board with the same List of Stacks and dim as the source
+	 * This function creates a new Board with the same bidimensional array and dim as the source
 	 * @param source current Board
 	 */
 	public Board(Board source){
@@ -65,6 +65,7 @@ public class Board implements Ilayout, Cloneable {
 	public int getDim(){
 		return dim;
 	}
+
     /**
      * @return comparison function so that contains works properly
      */
@@ -83,26 +84,7 @@ public class Board implements Ilayout, Cloneable {
 			Arrays.deepEquals(rotation180, b.board) ||
 			Arrays.deepEquals(rotation270, b.board);
 	}
-	// @Override
-	// public boolean equals(Object l){
-	// 	Board b;
-	// 	if(l instanceof Board)
-	// 		b = (Board) l;
-	// 	else return false;
-
-	// 	for(int i = 0; i < dim; i++)
-	// 		for(int j = 0; j < dim; j++){
-	// 			char bPos = board[i][j];
-	// 			int xOper = operateRotation(i, dim);
-	// 			if( bPos != b.board[i][j] && 
-	// 				bPos != b.board[j][xOper] &&
-	// 				bPos != b.board[xOper][j] &&
-	// 				bPos != b.board[j][i]
-	// 				)
-	// 				return false;
-	// 		}
-	// 	return true;	
-	// }
+	
 	public static char[][] RotateArray(char[][] matrix, int dim) {
 		char[][] ret = new char[dim][dim];
 	
@@ -114,6 +96,7 @@ public class Board implements Ilayout, Cloneable {
 	
 		return ret;
 	}
+
 	/**
 	 * @return List of all possible movements, excluding one that equals the initial layout, and any repeated 
 	 */
@@ -133,11 +116,14 @@ public class Board implements Ilayout, Cloneable {
 				}
 			}
 		}
-		//Collections.shuffle(children);
         return children;
 	}
 
-
+	/**
+	 * This function allows checking the number of positions that can take the Agent to a victory
+	 * @param a Agent's Symbol that needs to be checked
+	 * @return the number of unclosed holes,meaning the number of positions that can take him to victory
+	 */
 	public int uncloseHoles(Agent a){
 		int h=0;
 		for (int i = 0; i < dim; i++) {
@@ -150,6 +136,12 @@ public class Board implements Ilayout, Cloneable {
 		return h;
 	}
 
+	/**
+	 * 
+	 * @param col the column to be checked
+	 * @param c the Agent's Symbol 
+	 * @return the number of positions in column <i>col</i> that have that symbol
+	 */
 	private int closeCol(int col,char c){
 		int n=0;
 		for (int i = 0; i < dim; i++) {
@@ -158,6 +150,12 @@ public class Board implements Ilayout, Cloneable {
 		return n;
 	}
 
+	/**
+	 * 
+	 * @param row the row to be checked
+	 * @param c the Agent's Symbol
+	 * @return the number of positions in row that have that symbol
+	 */
 	private int closeRow(int row,char c){
 		int n=0;
 		for (int i = 0; i < dim; i++) {
@@ -165,7 +163,12 @@ public class Board implements Ilayout, Cloneable {
 		}
 		return n;
 	}
-
+	
+	/**
+	 * 
+	 * @param c the Agent's Symbol
+	 * @return the number of positions in LRD(Left to Right Diagonal) that have that symbol
+	 */
 	public int closeLRD(char c){
 		int n=0;
 		for (int i = 0; i < board.length; i++) 
@@ -173,6 +176,11 @@ public class Board implements Ilayout, Cloneable {
 		return n;
 	}
 
+	/**
+	 * 
+	 * @param c the Agent's Symbol
+	 * @return he number of positions in RLD(Right to Left Diagonal) that have that symbol
+	 */
 	private int closeRLD(char c){
 		int n=0;
 		for (int i = 0; i < board.length; i++) 
@@ -180,6 +188,9 @@ public class Board implements Ilayout, Cloneable {
 		return n;
 	}
 
+	/**
+	 * @return true if the board is in a terminal state, meaning there is a victory or it's full, or false if the is in a inconclusive state
+	 */
 	public boolean terminal(){
 		return status()!='i'; 
 	}
@@ -190,7 +201,10 @@ public class Board implements Ilayout, Cloneable {
 		return victory() ? (char) player.opponent().getSymbol() : loss() ? (char) player.getSymbol() : full() ? 'f' : 'i';
 	}
 	
-
+	/**
+	 * 
+	 * @return true if there is a winner and it's the last Agent that played, false if otherwise
+	 */
 	public boolean victory(){
 		Agent opponent = player.opponent();
 		char mySmbol = opponent.getSymbol();
@@ -200,6 +214,10 @@ public class Board implements Ilayout, Cloneable {
         return (closeLRD(mySmbol)==dim || closeRLD(mySmbol)==dim);		
 	}
 
+	/**
+	 * 
+	 * @return true if there is a loser and it's the Agent that has the next move, false otherwise
+	 */
     public boolean loss(){
 		char oppSmbol = player.getSymbol();
         for (int i = 0; i < 3; i++)
@@ -210,7 +228,7 @@ public class Board implements Ilayout, Cloneable {
 
 	/**
 	 * 
-	 * @return
+	 * @return true if there is no more plays to be made, false otherwise
 	 */
     private boolean full(){
         for (int row = 0; row < 3; row++) 
@@ -221,8 +239,7 @@ public class Board implements Ilayout, Cloneable {
     }
 
 	/**
-	 * @return Returns the configuration that represents each stack of blocks in a separated row. Each stack is within
-	 * [] and two consecutive blocks within the same stack are separated by a comma followed by a space.
+	 * @return Returns the configuration that represents the board{@} with the empty positons represented by <i>-<i/>
 	 */
 	@Override
 	public String toString() {
@@ -255,8 +272,12 @@ public class Board implements Ilayout, Cloneable {
 		return s.toString();
 	}
 
+	/**
+	 * 
+	 * @param pos position chosen by the Player
+	 * @return a Board resulting from the Player's move
+	 */
 	public Board move(int pos) throws IndexOutOfBoundsException,IllegalStateException{
-		//System.out.println("Active agent before move" + player.getName());
 		if(pos > 8 || pos < 0)
 			throw new IndexOutOfBoundsException("Position must be a value between 0 and 8");
 		Board copy = new Board(this);
@@ -266,10 +287,13 @@ public class Board implements Ilayout, Cloneable {
 			throw new IllegalStateException("This spot is already filled in, try a new move");
 		else copy.board[r][c] = player.getSymbol();
 		copy.player=player.opponent();
-		//System.out.println("Active agent after move: " + copy.player.getName());
+
 		return copy;	
 	}
 
+	/**
+	 * @return a randomly moved Board 
+	 */
 	private Ilayout lightPlayout(){
 		Board copy = new Board(this);
 		int i = rand.nextInt(dim*dim);
@@ -283,12 +307,15 @@ public class Board implements Ilayout, Cloneable {
 		else return lightPlayout();
 	}
 
+	/**
+	 * 
+	 * Part I - return imediate win;
+	 * Part II - If there is no win and opponent can win next turn fill holes
+     * Part III - If no other condition applies random
+	 * 
+	 * @return The best possible Board played by the Simulation, this can be by winning or blocking the other Agent from winning, if none of those apply a randomly moved Board will be returned 
+	 */
 	private Ilayout heavyPlayout(){
-		/**
-		 * Part I - return imediate win;
-		 * Part II - If there is no win and opponent can win next turn fill holes
-		 * Part III - If no other condition applies random(future heuristics)
-		 */
 		Board copy = new Board(this);
 		int cH=uncloseHoles(copy.player.opponent());
 		
@@ -309,6 +336,9 @@ public class Board implements Ilayout, Cloneable {
 		return heavyPlayout();
 	}
 
+	/**
+	 * This function prints out the result of the game
+	 */
 	@Override
 	public void resultMessage() {
 		char status = status();
