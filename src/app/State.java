@@ -124,4 +124,12 @@ public class State{
     public Agent agentThatMoved(){
         return agentHasNextMove().opponent();
     }
+
+    @Override
+    public boolean equals(Object s){
+        if(s instanceof State){
+            return layout.equals(((State)s).layout);
+        }
+        return false;
+    }
 }
