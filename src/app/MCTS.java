@@ -21,13 +21,17 @@ public class MCTS implements Agent{
         this.iter = iter;
     }
 
+    /**
+     * For each iteration 
+     * @param b last played Ilayout
+     * @return the best move against last Played Ilayout
+     */
     public Ilayout move(Ilayout b){
         State root = new State(b, null);
         if(!root.getLayout().getAgent().equals(this)){
             return null;
         }
-        for(int iteration = 0; iteration < iter;iteration++){
-            //System.out.println(iteration);
+        for(int iteration = 0; iteration < iter;iteration++){   
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
             /* Phase 2 - Expansion */
@@ -36,16 +40,18 @@ public class MCTS implements Agent{
             /* Phase 3 - Simulation */
             for(State s : selected.getChildArray()){
                 char result = mctsStateSimulate(s);
-                /* Phase 4 - BackPropagation */
-                //System.out.println(result);
+                /* Phase 4 - BackPropagation */          
                 mctsBackPropagation(s, result);
             }
         }
-        //System.out.println(root.getVisitCount() + " " + root.getWinScore());
-        //System.out.println(root.getChildArray());
+        
         return State.bestChildScore(root).getLayout();
     }
-    
+    /**
+     * This function selectes the best leaf node according to the UCB
+     * @param root the starting State
+     * @return the the best leaf
+     */
     private State mctsStateSelection(State root){
         State selected = root;
         while(!selected.getChildArray().isEmpty())
@@ -53,14 +59,24 @@ public class MCTS implements Agent{
         return selected;
     }
 
+    /**
+     * This function creates the children of the State selected
+     * @param selected the State to be expanded
+     */
     private void mctsStateExpansion(State selected) {
         if(!selected.getLayout().terminal())
             selected.makeChildren();
-        //System.out.println(selected.getChildArray());
+        
     }
 
-
-
+    /**
+     * This function back propagates until it reachs the root.
+     * For each node of up the tree,it updates the values of visits and win score.
+     * If the simulation results in a win for the selected State's Agent the win score of every node up the tree with the same Agent will increment by 1.
+     * if the simulation results in a draw the win score of every node up the tree will increment by 0.5.
+     * @param selected the State from wich the backpropagation starts
+     * @param result the status result of the simulation of the selected Ilayout
+     */
     private void mctsBackPropagation(State selected, char result){
         State temp = selected;
         while (temp != null) {
@@ -74,14 +90,17 @@ public class MCTS implements Agent{
         }
     }
 
+    /**
+     * This function simulates the game from selected State untill it reaches a terminal state.
+     * If a child is terminal, and results in a loss, this means that if the parent board is chosen, the game will result in a loss if optimal plays are made
+     * So if a child is terminal and lost, we need to tell the algorithm that choosing that board, or even exploring it would be costly and uncesseray as it would lead to game loss
+     * @param selected the State to be simulated
+     * @return the result of the simulation
+     */
     private char mctsStateSimulate(State selected){
         Ilayout temp = (Ilayout) selected.getLayout().clone();
         char status = temp.status();
         if(status == opponent.getSymbol()) {
-            /**
-             * If a child is terminal, and results in a loss, this means that if the parent board is chosen, the game will result in a loss if optimal plays are made
-             * So if a child is terminal and lost, we need to tell the algorithm that choosing that board, or even exploring it would be costly and uncesseray as it would lead to game loss
-             **/ //
             selected.getParent().setWinCount(Integer.MIN_VALUE);
             return temp.status();
         }

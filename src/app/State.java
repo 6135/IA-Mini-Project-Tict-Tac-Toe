@@ -57,7 +57,7 @@ public class State{
 	}
     /**
      * 
-     * @return The 
+     * @return The State's children 
      */
     public List<State> makeChildren(){
         if(childArray.isEmpty()){
@@ -72,10 +72,10 @@ public class State{
 
     public void visit(){this.visitCount++;}
     public void addWinScore(double add){this.winScore+=add;}
-    
+
     /**
      * 
-     * @return
+     * @return the ucb(Upper Confidence Bound) of the State
      */
     public double ucbCalc(){
         if(visitCount == 0)
@@ -91,6 +91,11 @@ public class State{
         }
     }; 
 
+    /**
+     * 
+     * @param root
+     * @return
+     */
     public static State bestChildUCB(State root){
         return Collections.max(root.getChildArray(), cmpUCB );
     }
@@ -99,7 +104,12 @@ public class State{
             return (int) Math.signum((o1.winScore/o1.visitCount) - (double) (o2.winScore/o2.visitCount));
         }
     };
-
+    
+    /**
+     * 
+     * @param root
+     * @return
+     */
     public static State bestChildScore(State root) {
         return Collections.max(root.getChildArray(), cmpMaxScore);
     }
