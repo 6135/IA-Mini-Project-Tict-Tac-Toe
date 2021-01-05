@@ -8,7 +8,7 @@ import java.util.Random;
 
 
 public class State{
-    private static final double c = 1.41425;
+    private static final double c = 0.9;
     private State parent;
     private Ilayout layout;
     private List<State> childArray;

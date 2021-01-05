@@ -12,17 +12,8 @@ import java.util.List;
 import org.junit.Test;
 
 import app.*;
-public class PuzzleUnitTests {
+public class BoardTests {
     
-    @Test(timeout = 1000)
-    public void testConstructor() {
-        //todo
-    }
-
-    @Test (timeout = 1000)
-    public void testConstructor2() {
-        //todo
-    }
 
     @Test (timeout = 10000)
     public void testChildren(){
