@@ -4,7 +4,7 @@ package app;
  * MCTS
  */
 public class MCTS implements Agent{
-    private int iter = 250;
+    private int iter = 1000;
     private String agentName;
     private char symbol;
     private Agent opponent;
