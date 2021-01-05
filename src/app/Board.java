@@ -277,7 +277,7 @@ public class Board implements Ilayout, Cloneable {
 	 * @param pos position chosen by the Player
 	 * @return a Board resulting from the Player's move
 	 */
-	public Board move(int pos) throws IndexOutOfBoundsException,IllegalStateException{
+	public Board moveToPos(int pos) throws IndexOutOfBoundsException,IllegalStateException{
 		if(pos > 8 || pos < 0)
 			throw new IndexOutOfBoundsException("Position must be a value between 0 and 8");
 		Board copy = new Board(this);

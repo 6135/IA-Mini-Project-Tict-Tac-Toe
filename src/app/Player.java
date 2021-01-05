@@ -50,7 +50,7 @@ public class Player implements Agent{
     @Override
     public Ilayout move(Ilayout b) {
         Scanner sc = new Scanner(System.in);
-        b = b.move(sc.nextInt());
+        b = b.moveToPos(sc.nextInt());
         return b;
     }
 
