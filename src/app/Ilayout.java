@@ -16,7 +16,7 @@ public interface Ilayout{
      */
     String toString();
     public Object clone();
-    public Ilayout move(int pos) throws IndexOutOfBoundsException,IllegalStateException;
+    public Ilayout moveToPos(int pos) throws IndexOutOfBoundsException,IllegalStateException;
     public Ilayout playout();
     public char status();
     public void resultMessage();
