@@ -6,9 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-/**
- * State
- */
+
 public class State{
     private static final double c = 1.41425;
     private State parent;
@@ -93,8 +91,8 @@ public class State{
 
     /**
      * 
-     * @param root
-     * @return
+     * @param root the starting State
+     * @return the child with the best UCB
      */
     public static State bestChildUCB(State root){
         return Collections.max(root.getChildArray(), cmpUCB );
@@ -104,11 +102,11 @@ public class State{
             return (int) Math.signum((o1.winScore/o1.visitCount) - (double) (o2.winScore/o2.visitCount));
         }
     };
-    
+
     /**
      * 
-     * @param root
-     * @return
+     * @param root the starting State
+     * @return the child with the best probability of winning
      */
     public static State bestChildScore(State root) {
         return Collections.max(root.getChildArray(), cmpMaxScore);

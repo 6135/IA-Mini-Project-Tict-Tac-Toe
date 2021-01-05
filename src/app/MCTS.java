@@ -22,7 +22,8 @@ public class MCTS implements Agent{
     }
 
     /**
-     * For each iteration 
+     * For each iteration the four steps(Selection,Expansion,Simulation and BackPropagation) will be executed.
+     * The Simulation and BackPropagation will occur for each child of selected State
      * @param b last played Ilayout
      * @return the best move against last Played Ilayout
      */
@@ -48,7 +49,7 @@ public class MCTS implements Agent{
         return State.bestChildScore(root).getLayout();
     }
     /**
-     * This function selectes the best leaf node according to the UCB
+     * This function selects the best leaf node according to the UCB
      * @param root the starting State
      * @return the the best leaf
      */
