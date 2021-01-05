@@ -13,9 +13,9 @@ import org.junit.Test;
 
 import app.*;
 public class TicTacToeOptimalGameTest {
-    private static final int iter =  1000;
+    private static final int iter =  10000;
     private static final double delta = 0.0;
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest1(){
         int testID = 1;
         Agent p1 = new Player("Player",'X');
@@ -42,7 +42,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest2(){
         int testID = 2;
         Agent p1 = new Player("Player",'X');
@@ -68,7 +68,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest3(){
         int testID = 3;
         Agent p1 = new Player("Player",'X');
@@ -94,7 +94,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest4(){
         int testID = 4;
         Agent p1 = new Player("Player",'X');
@@ -123,7 +123,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID); //game ends, no more moves would work
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest5(){
         int testID = 5;
         Agent p1 = new Player("Player",'X');
@@ -154,7 +154,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest6(){
         int testID = 6;
         Agent p1 = new Player("Player",'X');
@@ -184,7 +184,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest7(){
         int testID = 7;
         Agent p1 = new Player("Player",'X');
@@ -214,7 +214,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest8(){
         int testID = 8;
         Agent p1 = new Player("Player",'X');
@@ -244,7 +244,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void algorithmTest9(){
         int testID = 9;
         Agent p1 = new Player("Player",'X');
@@ -275,7 +275,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test (timeout = 100_000)
+    @Test 
     public void testBotVSBot(){
         Agent cpu1 = new MCTS('X');
         Agent cpu2 = new MCTS('O');
