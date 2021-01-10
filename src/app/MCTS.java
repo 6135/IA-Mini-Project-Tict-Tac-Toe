@@ -184,6 +184,7 @@ public class MCTS{
                 mctsBackPropagation(s, result);
             }
         }
+        System.out.println(root.visitCount);
         return (new State()).bestChildScore(root).newMovePos;
     }
     /**
@@ -222,8 +223,8 @@ public class MCTS{
             temp.visit();
             if (temp.agentThatMoved() == result)
                 temp.addWinScore(1.0);
-            else if(result ==Board.State.Blank)
-                temp.addWinScore(0.5);
+            // else if(result ==Board.State.Blank)
+            //     temp.addWinScore(0.5);
 
             temp = temp.getParent();
         }
