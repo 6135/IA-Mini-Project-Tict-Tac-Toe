@@ -17,6 +17,7 @@ public class Main {
             System.out.println();}
             System.out.println(b.toString());
         }
+        
 
         // b.move(sc.nextInt());
         // System.out.println(b.toString());

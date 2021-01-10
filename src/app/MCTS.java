@@ -63,6 +63,7 @@ public class MCTS{
         private List<Board> returnIf(List<Board> children){
             List<Board> winChild = new ArrayList<>();
             for (Board board : children) {
+                System.out.println(board.isGameOver());
                 if(board.isGameOver() && board.getWinner() == nextTurn() ){ // TODO: Not completely right ?
                     winChild.add(board);
                 }

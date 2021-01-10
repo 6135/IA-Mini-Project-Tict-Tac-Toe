@@ -28,6 +28,18 @@ public class Board {
     }
 
     /**
+     * Construct the Tic Tac Toe board.
+     */
+    Board(State[][] board, State playersTurn, boolean gameOver) {
+        this.board = board;
+        movesAvailable = new HashSet<>();
+        this.playersTurn = playersTurn;
+        moveCount = 0;
+        this.gameOver = gameOver;
+        winner = State.Blank;
+    }
+
+    /**
      * Set the cells to be blank and load the available moves (all the moves are
      * available at the start of the game).
      */
