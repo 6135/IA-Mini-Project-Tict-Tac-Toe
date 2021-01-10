@@ -1,39 +1,52 @@
 package app;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+
+
 
 /**
  * MCTS
  */
-public class MCTS implements Agent{
+public class MCTS{
 
     public class State{
         private static final double c = 0.9;
         private State parent;
-        private Ilayout layout;
+        private Board layout;
         private List<State> childArray;
         private double winScore;
         private int visitCount;
-        
-        public State(Ilayout layout, State parent) {
+        private int newMovePos;
+
+        public State(Board layout, State parent) {
             this.layout = layout;
             this.parent = parent;
             childArray = new ArrayList<>();
         }
     
+        public State(Board layout, State parent, int newMovePos) {
+            this.layout = layout;
+            this.parent = parent;
+            this.newMovePos = newMovePos;
+            childArray = new ArrayList<>();
+        }
+
         public State(){}
 
         public void setParent(State parent){this.parent = parent;}
-        public void setBoard(Ilayout layout){this.layout = layout;}
+        public void setBoard(Board layout){this.layout = layout;}
         public void setChildArray(List<State> childArray){this.childArray = childArray;}
         public void setWinCount(int winScore){this.winScore = winScore;}
         public void setVisitCount(int visitCount){this.visitCount = visitCount;}
     
         public State getParent(){return parent;}
-        public Ilayout getLayout(){return layout;}
+        public Board getLayout(){return layout;}
         public List<State> getChildArray(){return childArray;}
         public double getWinScore(){return winScore;}
         public int getVisitCount(){return visitCount;}
@@ -42,19 +55,28 @@ public class MCTS implements Agent{
         /**
          * Taking the root as an example, if one of the root's children is a win, this means that it's a good choice, even the best choice.
          * Thus this fuction, if there is any such children, returns only those children as there is no point in running statistics for any other non-win boards.
-         * This function is true for any board, making it usable for any class that implements Ilayout properly. 
+         * This function is true for any board, making it usable for any class that implements Board properly. 
          * (less blind searching)
          * @param children The array of children to check from
          * @return The list of children that matters, or the original if none is win.
          */
-        private List<Ilayout> returnIf(List<Ilayout> children){
-            List<Ilayout> winChild = new ArrayList<>();
-            for (Ilayout ilayout : children) {
-                if(ilayout.status() == agentHasNextMove().getSymbol()){
-                    winChild.add(ilayout);
+        private List<Board> returnIf(List<Board> children){
+            List<Board> winChild = new ArrayList<>();
+            for (Board board : children) {
+                if(board.isGameOver() && board.getWinner() == nextTurn() ){ // TODO: Not completely right ?
+                    winChild.add(board);
                 }
             }
             return winChild.isEmpty() ? children : winChild;
+        }
+        public List<Board> childrenToBoards(){
+            List<Board> children = new ArrayList<>();
+            for (Integer integer : layout.getAvailableMoves()) {
+                Board cloned = layout.getDeepCopy();
+                cloned.move(integer);
+                children.add(cloned);
+            }
+            return returnIf(children);
         }
         /**
          * 
@@ -63,8 +85,9 @@ public class MCTS implements Agent{
         public List<State> makeChildren(){
             if(childArray.isEmpty()){
                 List<State> children = new ArrayList<>();
-                for(Ilayout l : returnIf(layout.children())){
-                    children.add(new State(l,this));
+                Iterator<Integer> itr = layout.getAvailableMoves().iterator();
+                for(Board l : childrenToBoards()){
+                    children.add(new State(l,this,itr.next()));
                 }
                 setChildArray(children);
                 return children;
@@ -117,15 +140,7 @@ public class MCTS implements Agent{
         
         @Override
         public String toString() {
-            return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).flatToString();
-        }
-    
-        public Agent agentHasNextMove(){
-            return ((Board) layout).getAgent();
-        }
-    
-        public Agent agentThatMoved(){
-            return agentHasNextMove().opponent();
+            return Double.toString(ucbCalc()) + " " + visitCount + " " + winScore + " " + ((Board)layout).toString();
         }
     
         @Override
@@ -135,51 +150,41 @@ public class MCTS implements Agent{
             }
             return false;
         }
+
+        public Board.State agentThatMoved(){
+            return (layout.getTurn() == Board.State.X) ? Board.State.O : Board.State.X;
+        }
+
+        public Board.State nextTurn(){
+            return layout.getTurn();
+        }        
     }
-
-    private int iter = 250;
-    private String agentName;
-    private char symbol;
-    private Agent opponent;
-
-    public MCTS(char symbol){
-        this.agentName = "CPU";
-        this.symbol = symbol;
-
-    }
-
-    public MCTS(char symbol, int iter){
-        this.agentName = "CPU";
-        this.symbol = symbol;
-        this.iter = iter;
-    }
+    private Board.State botSymbol;
+    private int iter = 500;
 
     /**
      * For each iteration the four steps(Selection,Expansion,Simulation and BackPropagation) will be executed.
      * The Simulation and BackPropagation will occur for each child of selected State
-     * @param b last played Ilayout
-     * @return the best move against last Played Ilayout
+     * @param b last played Board
+     * @return the best move against last Played Board
      */
-    public Ilayout move(Ilayout b){
+    public int move(Board b){
+        botSymbol = b.getTurn();
         State root = new State(b, null);
-        if(!root.getLayout().getAgent().equals(this)){
-            return null;
-        }
         for(int iteration = 0; iteration < iter;iteration++){   
             /* Phase 1 - Selection */
             State selected = mctsStateSelection(root);
             /* Phase 2 - Expansion */
-            if(!selected.getLayout().terminal())
+            if(!selected.getLayout().isGameOver())
                 mctsStateExpansion(selected);
             /* Phase 3 - Simulation */
             for(State s : selected.getChildArray()){
-                char result = mctsStateSimulate(s);
+                Board.State result = mctsStateSimulate(s);
                 /* Phase 4 - BackPropagation */          
                 mctsBackPropagation(s, result);
             }
         }
-        
-        return (new State()).bestChildScore(root).getLayout();
+        return (new State()).bestChildScore(root).newMovePos;
     }
     /**
      * This function selects the best leaf node according to the UCB
@@ -198,7 +203,7 @@ public class MCTS implements Agent{
      * @param selected the State to be expanded
      */
     private void mctsStateExpansion(State selected) {
-        if(!selected.getLayout().terminal())
+        if(!selected.getLayout().isGameOver())
             selected.makeChildren();
         
     }
@@ -209,15 +214,15 @@ public class MCTS implements Agent{
      * If the simulation results in a win for the selected State's Agent the win score of every node up the tree with the same Agent will increment by 1.
      * if the simulation results in a draw the win score of every node up the tree will increment by 0.5.
      * @param selected the State from wich the backpropagation starts
-     * @param result the status result of the simulation of the selected Ilayout
+     * @param result the status result of the simulation of the selected Board
      */
-    private void mctsBackPropagation(State selected, char result){
+    private void mctsBackPropagation(State selected, Board.State result){
         State temp = selected;
         while (temp != null) {
             temp.visit();
-            if (temp.agentThatMoved().getSymbol() == result )
+            if (temp.agentThatMoved() == result)
                 temp.addWinScore(1.0);
-            else if(result == 'f')
+            else if(result ==Board.State.Blank)
                 temp.addWinScore(0.5);
 
             temp = temp.getParent();
@@ -231,56 +236,95 @@ public class MCTS implements Agent{
      * @param selected the State to be simulated
      * @return the result of the simulation
      */
-    private char mctsStateSimulate(State selected){
-        Ilayout temp = (Ilayout) selected.getLayout().clone();
-        char status = temp.status();
-        if(status == opponent.getSymbol()) {
+    private Board.State mctsStateSimulate(State selected){
+        Board temp = selected.getLayout().getDeepCopy();
+        if(temp.isGameOver() && temp.getWinner() == opponent(botSymbol)){
             selected.getParent().setWinCount(Integer.MIN_VALUE);
-            return temp.status();
+            return temp.getWinner();
         }
         
-        while(!temp.terminal())
-            temp = temp.playout();
+        while(!temp.isGameOver())
+            temp = playout(temp);
             
-        return temp.status();
+        return temp.getWinner(); // Board.State.Blank if draw
+    }
+    private Random rand = new Random();
+    private int dim = Board.BOARD_WIDTH;
+	/**
+	 * @return a randomly moved Board 
+	 */
+	private Board lightPlayout(Board b){
+		Board copy = b.getDeepCopy();
+		int i = rand.nextInt(dim*dim);
+		if(copy.move(i)) return copy;
+		else return lightPlayout(b);
+	}
+	private int uncloseHoles(Board.State a, Board b){
+        int h=0;
+        Board.State[][] board = b.toArray();
+		for (int i = 0; i < dim; i++) {
+			if(closeCol(i,a,board)==dim-1 && closeCol(i,Board.State.Blank,board)==1) h++;
+			if(closeRow(i,a,board)==dim-1 && closeRow(i,Board.State.Blank,board)==1) h++;
+		}
+		if(closeLRD(a,board)== dim-1 && closeLRD(Board.State.Blank,board)==1) h++;
+		if(closeRLD(a,board)== dim-1 && closeRLD(Board.State.Blank,board)==1) h++;
+		
+		return h;
+    }
+ 
+	private int closeCol(int col,Board.State c,Board.State[][] board){
+		int n=0;
+		for (int i = 0; i < dim; i++) {
+			if(board[i][col]==c) n++;
+		}
+		return n;
+    }
+    
+	private int closeRow(int row,Board.State c,Board.State[][] board){
+		int n=0;
+		for (int i = 0; i < dim; i++) {
+			if(board[row][i]==c) n++;
+		}
+		return n;
+    }
+    
+	public int closeLRD(Board.State c,Board.State[][] board){
+		int n=0;
+		for (int i = 0; i < board.length; i++) 
+			if(board[i][i]==c) n++;
+		return n;
+    }
+    
+	private int closeRLD(Board.State c,Board.State[][] board){
+		int n=0;
+		for (int i = 0; i < board.length; i++) 
+			if(board[i][(board.length-1)-i] == c) n++;
+		return n;
+	}   
+
+	private Board heavyPlayout(Board b){
+		Board copy = b.getDeepCopy();
+		int cH=uncloseHoles(opponent(copy.getTurn()),copy);
+		
+		Board child = null;
+        List<Board> children = (new State(copy,null)).childrenToBoards();
+        
+		for (Board c : children) {	
+			if( c.isGameOver() && c.getWinner()==copy.getTurn() ) return c;
+			if( cH > uncloseHoles(c.getTurn(),c)) child=c;
+		}
+		if(child!=null) return child;
+			
+
+		return lightPlayout(b);
+	}
+
+	public Board playout(Board b){
+		return heavyPlayout(b);
+    }
+    
+    private Board.State opponent(Board.State s){
+        return s == Board.State.X ? Board.State.O : Board.State.X;
     }
 
-    @Override
-    public void setOpponent(Agent a) {
-        this.opponent = a;
-        a.singleSetOpponent(this);
-    }
-
-    @Override
-    public Agent opponent() {return opponent;}
-
-    @Override
-    public char getSymbol() {return symbol;}
-
-    @Override
-    public void setSymbol(char symbol) {this.symbol = symbol;}
-
-    @Override
-    public void setName(String name) {this.agentName = name;}
-
-    @Override
-    public String getName() {return agentName;}
-    @Override
-    public int hashCode() {
-        return getSymbol();
-    }
-    @Override
-    public boolean equals(Object o){
-        if(o instanceof MCTS){
-            MCTS mcts = (MCTS) o;
-            return getName() == mcts.getName() && getSymbol() == mcts.getSymbol();
-        }
-        return false;
-    }
-
-    @Override
-    public void singleSetOpponent(Agent a) {
-        this.opponent = a;
-
-    }
 }
