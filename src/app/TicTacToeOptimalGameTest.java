@@ -19,8 +19,7 @@ public class TicTacToeOptimalGameTest {
         int testID = 9;
            
 
-        Board.State[][] playerPlay1 = { {Board.State.Blank,Board.State.X,Board.State.O},{Board.State.X,Board.State.O,Board.State.X},{Board.State.Blank,Board.State.Blank,Board.State.Blank} };
-    
+        Board.State[][] playerPlay1 = { {Board.State.X,Board.State.X,Board.State.O}, {Board.State.Blank,Board.State.X,Board.State.Blank}, {Board.State.X,Board.State.O,Board.State.O} };    
         int cMoves = 0;
         Board playerPlay = new Board(playerPlay1,Board.State.O,false);
 
