@@ -9,6 +9,7 @@ public class DEMOAgent {
      * @param board         the Tic Tac Toe board to play on
      */
 	public static int move(Board b) {
+
 		Set<Integer> moves = b.getAvailableMoves();
 		
 		int nam = moves.size();
@@ -17,5 +18,7 @@ public class DEMOAgent {
 		
 		int r = (int)(Math.random() * nam);
 		return array[r];
+		
 	}
+
 }

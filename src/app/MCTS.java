@@ -1,10 +1,8 @@
 package app;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -55,21 +53,13 @@ public class MCTS{
         private List<State> returnIfStates(List<State> children){
             List<State> winChild = new ArrayList<>();
             for (State state : children) {
-                if(state.layout.isGameOver() && state.layout.getWinner() == nextTurn() ) // TODO: Not completely right ?
+                if(state.layout.isGameOver() && state.layout.getWinner() == nextTurn() )
                     winChild.add(state);
             }
             return winChild.isEmpty() ? children : winChild;
         }
-
-        public List<Board> childrenAsBoards(){
-            List<Board> children = new ArrayList<>();
-            for (State s : childArray) {
-                children.add(s.layout);
-            }
-            return children;
-        }
     
-        public List<State> statifyChildren(){
+        public List<State> makeChildren(){
             List<State> states = new ArrayList<>();
             if(childArray.isEmpty()){
                 for (Integer it : layout.getAvailableMoves()) {
@@ -152,11 +142,12 @@ public class MCTS{
     private int iter = 1000;
 
     /**
-     * For each iteration the four steps(Selection,Expansion,Simulation and BackPropagation) will be executed.
-     * The Simulation and BackPropagation will occur for each child of selected State
-     * @param b last played Board
-     * @return the best move against last Played Board
-     */
+    * @return an integer between 0 and 8 representing a valid  move, with the following meaning
+    * 0 | 1 | 2
+    * 3 | 4 | 5
+    * 6 | 7 | 8 
+    * @param board the Tic Tac Toe board to play on
+    */
     public int move(Board b){
         botSymbol = b.getTurn();
         State root = new State(b, null);
@@ -194,7 +185,7 @@ public class MCTS{
      */
     private void mctsStateExpansion(State selected) {
         if(!selected.getLayout().isGameOver())
-            selected.statifyChildren();
+            selected.makeChildren();
         
     }
 
@@ -253,8 +244,9 @@ public class MCTS{
         copy.move(i);
         return copy;
 	}
-	private int uncloseHoles(Board.State a, Board b){
+	private int uncloseHoles(Board b){
         int h=0;
+        Board.State a = b.getTurn();
         Board.State[][] board = b.toArray();
 		for (int i = 0; i < dim; i++) {
 			if(closeCol(i,a,board)==dim-1 && closeCol(i,Board.State.Blank,board)==1) h++;
@@ -283,29 +275,30 @@ public class MCTS{
     }
     
 	public int closeLRD(Board.State c,Board.State[][] board){
-		int n=0;
-		for (int i = 0; i < board.length; i++) 
+        int n=0;
+		for (int i = 0; i < dim; i++) 
 			if(board[i][i]==c) n++;
 		return n;
     }
     
 	private int closeRLD(Board.State c,Board.State[][] board){
-		int n=0;
-		for (int i = 0; i < board.length; i++) 
-			if(board[i][(board.length-1)-i] == c) n++;
+        int n=0;
+		for (int i = 0; i < dim; i++) 
+			if(board[i][(dim-1)-i] == c) n++;
 		return n;
 	}   
 
 	private Board heavyPlayout(Board b){
 		Board copy = b.getDeepCopy();
-		int cH=uncloseHoles(opponent(copy.getTurn()),copy);
-		
+		int cH=uncloseHoles(copy);
+        // System.out.println(cH);
+
 		Board child = null;
-        List<Board> children = (new State(copy,null)).childrenAsBoards();
+        List<State> children = (new State(copy,null)).makeChildren();
         
-		for (Board c : children) {	
-			if( c.isGameOver() && c.getWinner()==copy.getTurn() ) return c;
-			if( cH > uncloseHoles(c.getTurn(),c)) child=c;
+		for (State c : children) {	
+			if( c.layout.isGameOver() && c.layout.getWinner()==copy.getTurn() ) return c.layout;
+			if( cH > uncloseHoles(c.layout)) child=c.layout;
 		}
 		if(child!=null) return child;
 			
