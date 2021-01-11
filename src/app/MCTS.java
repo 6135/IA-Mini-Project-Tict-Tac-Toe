@@ -52,49 +52,37 @@ public class MCTS{
         public int getVisitCount(){return visitCount;}
     
     
-        /**
-         * Taking the root as an example, if one of the root's children is a win, this means that it's a good choice, even the best choice.
-         * Thus this fuction, if there is any such children, returns only those children as there is no point in running statistics for any other non-win boards.
-         * This function is true for any board, making it usable for any class that implements Board properly. 
-         * (less blind searching)
-         * @param children The array of children to check from
-         * @return The list of children that matters, or the original if none is win.
-         */
-        private List<Board> returnIf(List<Board> children){
-            List<Board> winChild = new ArrayList<>();
-            for (Board board : children) {
-                System.out.println(board.isGameOver());
-                if(board.isGameOver() && board.getWinner() == nextTurn() ){ // TODO: Not completely right ?
-                    winChild.add(board);
-                }
+        private List<State> returnIfStates(List<State> children){
+            List<State> winChild = new ArrayList<>();
+            for (State state : children) {
+                if(state.layout.isGameOver() && state.layout.getWinner() == nextTurn() ) // TODO: Not completely right ?
+                    winChild.add(state);
             }
             return winChild.isEmpty() ? children : winChild;
         }
-        public List<Board> childrenToBoards(){
+
+        public List<Board> childrenAsBoards(){
             List<Board> children = new ArrayList<>();
-            for (Integer integer : layout.getAvailableMoves()) {
-                Board cloned = layout.getDeepCopy();
-                cloned.move(integer);
-                children.add(cloned);
+            for (State s : childArray) {
+                children.add(s.layout);
             }
-            return returnIf(children);
-        }
-        /**
-         * 
-         * @return The State's children 
-         */
-        public List<State> makeChildren(){
-            if(childArray.isEmpty()){
-                List<State> children = new ArrayList<>();
-                Iterator<Integer> itr = layout.getAvailableMoves().iterator();
-                for(Board l : childrenToBoards()){
-                    children.add(new State(l,this,itr.next()));
-                }
-                setChildArray(children);
-                return children;
-            } else return getChildArray();
+            return children;
         }
     
+        public List<State> statifyChildren(){
+            List<State> states = new ArrayList<>();
+            if(childArray.isEmpty()){
+                for (Integer it : layout.getAvailableMoves()) {
+                    Board copy = layout.getDeepCopy();
+                    copy.move(it);
+                    states.add(new State(copy,this,it));
+                }
+                states = returnIfStates(states);
+                setChildArray(states);
+                return states;
+            } else return getChildArray();
+        }
+
         public void visit(){this.visitCount++;}
         public void addWinScore(double add){this.winScore+=add;}
     
@@ -161,7 +149,7 @@ public class MCTS{
         }        
     }
     private Board.State botSymbol;
-    private int iter = 500;
+    private int iter = 1000;
 
     /**
      * For each iteration the four steps(Selection,Expansion,Simulation and BackPropagation) will be executed.
@@ -185,7 +173,7 @@ public class MCTS{
                 mctsBackPropagation(s, result);
             }
         }
-        System.out.println(root.visitCount);
+        // System.out.println(root.visitCount);
         return (new State()).bestChildScore(root).newMovePos;
     }
     /**
@@ -206,7 +194,7 @@ public class MCTS{
      */
     private void mctsStateExpansion(State selected) {
         if(!selected.getLayout().isGameOver())
-            selected.makeChildren();
+            selected.statifyChildren();
         
     }
 
@@ -224,8 +212,8 @@ public class MCTS{
             temp.visit();
             if (temp.agentThatMoved() == result)
                 temp.addWinScore(1.0);
-            // else if(result ==Board.State.Blank)
-            //     temp.addWinScore(0.5);
+            else if(result == Board.State.Blank)
+                temp.addWinScore(0.5);
 
             temp = temp.getParent();
         }
@@ -257,9 +245,13 @@ public class MCTS{
 	 */
 	private Board lightPlayout(Board b){
 		Board copy = b.getDeepCopy();
-		int i = rand.nextInt(dim*dim);
-		if(copy.move(i)) return copy;
-		else return lightPlayout(b);
+        int i = rand.nextInt(dim*dim);
+        // System.out.println(copy.getAvailableMoves());
+        // System.out.println(copy.isGameOver());
+        while(!copy.getAvailableMoves().contains(i)){
+            i = rand.nextInt(dim*dim);}
+        copy.move(i);
+        return copy;
 	}
 	private int uncloseHoles(Board.State a, Board b){
         int h=0;
@@ -309,7 +301,7 @@ public class MCTS{
 		int cH=uncloseHoles(opponent(copy.getTurn()),copy);
 		
 		Board child = null;
-        List<Board> children = (new State(copy,null)).childrenToBoards();
+        List<Board> children = (new State(copy,null)).childrenAsBoards();
         
 		for (Board c : children) {	
 			if( c.isGameOver() && c.getWinner()==copy.getTurn() ) return c;

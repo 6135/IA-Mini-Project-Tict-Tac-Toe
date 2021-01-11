@@ -9,7 +9,7 @@ import org.junit.Test;
 import app.*;
 public class TicTacToeOptimalGameTest {
     private static final int iter =  10000;
-    private static final double delta = 0.0;
+    private static final double delta = 0.1;
 
     @Test 
     public void algorithmTest1(){
@@ -122,25 +122,23 @@ public class TicTacToeOptimalGameTest {
     @Test 
     public void algorithmTest5(){
         int testID = 5;
-        Agent p1 = new Player("Player",'X');
-        Agent cpu = new MCTS('O');
-
-        p1.setOpponent(cpu);
-          
-
-        char[][] playerPlay1 = { {'X','\0','\0'}, {'\0','O','\0'}, {'\0','\0','X'} };
-        char[][] botExpectedPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'\0','\0','X'} };
-        char[][] botExpectedPlay2 = { {'X','\0','\0'}, {'\0','O','O'}, {'\0','\0','X'} };
+        MCTS mcts = new MCTS();
+        int iter = 1000;
+        Board.State[][] playerPlay1 = { 
+            {Board.State.X,Board.State.Blank,Board.State.Blank},
+            {Board.State.Blank,Board.State.O,Board.State.Blank},
+            {Board.State.Blank,Board.State.Blank,Board.State.X} };
+        // char[][] botExpectedPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'\0','\0','X'} };
+        // char[][] botExpectedPlay2 = { {'X','\0','\0'}, {'\0','O','O'}, {'\0','\0','X'} };
     
         int cMoves = 0;
-        Ilayout playerBoard = new Board(playerPlay1,cpu);
-        Ilayout expectedBotBoard = new Board(botExpectedPlay1,p1);
-        Ilayout expectedBotBoard2 = new Board(botExpectedPlay2,p1);
+        Board playerPlayBoard = new Board(playerPlay1,Board.State.O,false);
+
         for(int i = 0; i < iter; i++){
-            Ilayout botMove = cpu.move(playerBoard);
-            if(botMove.equals(expectedBotBoard) || botMove.equals(expectedBotBoard2))
+            int botMove = mcts.move(playerPlayBoard);
+            System.out.println(botMove);
+            if(botMove == 1 || botMove == 5 || botMove == 7 || botMove == 3)
                 cMoves++;
-            //System.out.println(botMove);
         }
         double result = cMoves/(double)(iter);
         System.out.println(result);
@@ -153,24 +151,22 @@ public class TicTacToeOptimalGameTest {
     @Test 
     public void algorithmTest6(){
         int testID = 6;
-        Agent p1 = new Player("Player",'X');
-        Agent cpu = new MCTS('O');
+        MCTS mcts = new MCTS();
 
-        p1.setOpponent(cpu);
-           
-
-        char[][] playerPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'\0','X','X'} };
-        char[][] botExpectedPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'O','X','X'} };
+        Board.State[][] playerPlay1 = { 
+            {Board.State.X,Board.State.O,Board.State.Blank},
+            {Board.State.Blank,Board.State.O,Board.State.Blank},
+            {Board.State.Blank,Board.State.X,Board.State.X}
+        };
+        // char[][] botExpectedPlay1 = { {'X','O','\0'}, {'\0','O','\0'}, {'O','X','X'} };
     
         int cMoves = 0;
-        Ilayout playerBoard = new Board(playerPlay1,cpu);
-        Ilayout expectedBotBoard = new Board(botExpectedPlay1,p1);
+        Board playerPlayBoard = new Board(playerPlay1,Board.State.O,false);
 
         for(int i = 0; i < iter; i++){
-            Ilayout botMove = cpu.move(playerBoard);
-            if(botMove.equals(expectedBotBoard))
+            int botMove = mcts.move(playerPlayBoard);
+            if(botMove == 6)
                 cMoves++;
-            //System.out.println(botMove);
         }
         double result = cMoves/(double)(iter);
         System.out.println(result);
@@ -183,24 +179,23 @@ public class TicTacToeOptimalGameTest {
     @Test 
     public void algorithmTest7(){
         int testID = 7;
-        Agent p1 = new Player("Player",'X');
-        Agent cpu = new MCTS('O');
-
-        p1.setOpponent(cpu);
+        MCTS mcts = new MCTS();
             
 
-        char[][] playerPlay1 = { {'X','O','X'}, {'\0','O','\0'}, {'O','X','X'} };
-        char[][] botExpectedPlay = { {'X','O','X'}, {'\0','O','O'}, {'O','X','X'} };
+        Board.State[][] playerPlay1 = { 
+            {Board.State.X,Board.State.O,Board.State.X},
+            {Board.State.Blank,Board.State.O,Board.State.Blank},
+            {Board.State.O,Board.State.X,Board.State.X} 
+        };
+        // char[][] botExpectedPlay = { {'X','O','X'}, {'\0','O','O'}, {'O','X','X'} };
     
         int cMoves = 0;
-        Ilayout playerBoard = new Board(playerPlay1,cpu);
-        Ilayout expectedBotBoard = new Board(botExpectedPlay,p1);
+        Board playerPlayBoard = new Board(playerPlay1,Board.State.O,false);
 
         for(int i = 0; i < iter; i++){
-            Ilayout botMove = cpu.move(playerBoard);
-            if(botMove.equals(expectedBotBoard))
+            int botMove = mcts.move(playerPlayBoard);
+            if(botMove == 5)
                 cMoves++;
-            //System.out.println(botMove);
         }
         double result = cMoves/(double)(iter);
         System.out.println(result);
@@ -210,27 +205,23 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test 
+    @Test (timeout = (iter*500))
     public void algorithmTest8(){
         int testID = 8;
-        Agent p1 = new Player("Player",'X');
-        Agent cpu = new MCTS('O');
+        MCTS mcts = new MCTS();
 
-        p1.setOpponent(cpu);
-          
+        Board.State[][] playerPlay1 = { 
+            {Board.State.O,Board.State.X,Board.State.Blank},
+            {Board.State.Blank,Board.State.X,Board.State.Blank},
+            {Board.State.Blank,Board.State.Blank,Board.State.Blank} };
 
-        char[][] playerPlay1 = { {'O','X','\0'}, {'\0','X','\0'}, {'\0','\0','\0'} };
-        char[][] botExpectedPlay = { {'O','X','\0'}, {'\0','X','\0'}, {'\0','O','\0'} };
-    
         int cMoves = 0;
-        Ilayout playerBoard = new Board(playerPlay1,cpu);
-        Ilayout expectedBotBoard = new Board(botExpectedPlay,p1);
+        Board playerPlayBoard = new Board(playerPlay1,Board.State.O,false);
 
         for(int i = 0; i < iter; i++){
-            Ilayout botMove = cpu.move(playerBoard);
-            if(botMove.equals(expectedBotBoard))
+            int botMove = mcts.move(playerPlayBoard);
+            if(botMove == 7)
                 cMoves++;
-            //System.out.println(botMove);
         }
         double result = cMoves/(double)(iter);
         System.out.println(result);
@@ -243,25 +234,22 @@ public class TicTacToeOptimalGameTest {
     @Test 
     public void algorithmTest9(){
         int testID = 9;
-        Agent p1 = new Player("Player",'X');
-        Agent cpu = new MCTS('O');
+        MCTS mcts = new MCTS();
 
-        p1.setOpponent(cpu);
-           
-
-        char[][] playerPlay1 = { {'\0','X','O'},{'X','O','X'},{'\0','\0','\0'} };
-        char[][] botExpectedPlay = { {'\0','X','O'}, {'X','O','X'}, {'O','\0','\0'} };
+        Board.State[][] playerPlay1 = { 
+            {Board.State.Blank,Board.State.X,Board.State.O},
+            {Board.State.X,Board.State.O,Board.State.X},
+            {Board.State.Blank,Board.State.Blank,Board.State.Blank} 
+        };
     
         int cMoves = 0;
-        Ilayout playerBoard = new Board(playerPlay1,cpu);
-        Ilayout expectedBotBoard = new Board(botExpectedPlay,p1);
+        Board playerPlayBoard = new Board(playerPlay1,Board.State.O,false);
 
         for(int i = 0; i < iter; i++){
-            Ilayout botMove = cpu.move(playerBoard);
-            assertEquals(expectedBotBoard,botMove);
-            if(botMove.equals(expectedBotBoard))
+            int botMove = mcts.move(playerPlayBoard);
+            if(botMove == 6)
                 cMoves++;
-            //System.out.println(botMove);
+            System.out.println(botMove);
         }
         double result = cMoves/(double)(iter);
         System.out.println(result);
@@ -271,29 +259,22 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed algorithmTest" + testID);
     }
 
-    @Test 
+    @Test (timeout = (iter*600))
     public void testBotVSBot(){
-        Agent cpu1 = new MCTS('X');
-        Agent cpu2 = new MCTS('O');
-
-        cpu1.setOpponent(cpu2);
-          
-
-        Ilayout b;
-        Agent currentPlayer = cpu1;
+        MCTS mcts = new MCTS();
         int draws = 0;
-        /**
-         * First player alternates
-         */
+
+        Board b;
         for(int i = 0; i < iter; i++){
-            b = new Board(currentPlayer);
-            while(!b.terminal()) {
-                b = currentPlayer.move(b);
-                currentPlayer = currentPlayer.opponent();
-            }
-            if(b.status() == 'f')
+            b = new Board();
+            while(!b.isGameOver())
+                b.move(mcts.move(b));
+            
+            if(b.isGameOver() && b.getWinner() == Board.State.Blank)
                 draws++;
+
         }
+
         double result = draws / (double) iter;
         System.out.println(result);
         if( result < (1.0-delta) )
@@ -302,7 +283,7 @@ public class TicTacToeOptimalGameTest {
         System.out.println("Passed testBotVSBot");        
     }
 
-    @Test 
+    @Test (timeout = (iter*600))
     public void algorithmTest10(){
         int testID = 10;
         MCTS mcts = new MCTS();
@@ -319,7 +300,7 @@ public class TicTacToeOptimalGameTest {
             int botMove = mcts.move(playerPlayBoard);
             if(botMove == 3)
                 cMoves++;
-            //System.out.println(botMove);
+            // System.out.println(botMove);
         }
         double result = cMoves/(double)(iter);
         System.out.println(result);
@@ -328,6 +309,5 @@ public class TicTacToeOptimalGameTest {
         assertEquals(1, result , delta);
         System.out.println("Passed algorithmTest" + testID);
     }
-
 
 }

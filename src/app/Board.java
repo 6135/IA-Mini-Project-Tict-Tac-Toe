@@ -33,16 +33,17 @@ public class Board {
     Board(State[][] board, State playersTurn, boolean gameOver) {
         this.board = board;
         movesAvailable = new HashSet<>();
+        moveCount = 0;
         int n = 0;
         for (int row = 0; row < BOARD_WIDTH; row++) {
             for (int col = 0; col < BOARD_WIDTH; col++) {
                 if(board[row][col] == State.Blank)
                    movesAvailable.add(n); 
+                else moveCount++;
                 n++;
             }
         }
         this.playersTurn = playersTurn;
-        moveCount = 0;
         this.gameOver = gameOver;
         winner = State.Blank;
     }
